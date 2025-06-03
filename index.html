@@ -39,14 +39,14 @@
         .orientadores-visual-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0; /* Removido o gap para controlar com margem nos filhos */
+            gap: 1rem; /* Aumentado o gap para separar os cards */
             margin-top: 1rem;
             position: relative; /* Para contexto de z-index */
         }
         .orientadores-visual-grid > div {
             background-color: #2A4FDB; /* Azul escuro */
             color: white;
-            padding: 0.75rem 1rem;
+            padding: 1rem 1.5rem; /* Aumentado o padding para cards maiores */
             border-radius: 0.5rem;
             text-align: center;
             font-family: 'Figtree', sans-serif;
@@ -54,42 +54,37 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: transform 0.2s ease-in-out, z-index 0s;
             position: relative; /* Para z-index */
-            margin: 0.25rem; /* Pequena margem para separar visualmente */
+            /* Removido margens negativas aqui para evitar sobreposição */
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.3; /* Aumentado para melhor leitura */
-            font-size: 1rem; /* Aumentado a fonte */
+            line-height: 1.4; /* Aumentado para melhor leitura */
+            font-size: 1.1rem; /* Aumentado a fonte */
         }
         /* Aplica rotações sutis e z-index para o efeito escalonado */
         .orientadores-visual-grid > div:nth-child(4n+1) { /* Jornada do Cliente, Sociedade */
             transform: rotate(-2deg);
             z-index: 8;
-            margin-right: -0.5rem; /* Ajuste para sobreposição */
         }
         .orientadores-visual-grid > div:nth-child(4n+2) { /* Soluções, Tecnologia */
             transform: rotate(2deg);
             z-index: 7;
-            margin-left: -0.5rem; /* Ajuste para sobreposição */
         }
         .orientadores-visual-grid > div:nth-child(4n+3) { /* Inteligência e Dados, Processos Internos */
             transform: rotate(-1deg);
             z-index: 6;
-            margin-right: -0.5rem;
         }
         .orientadores-visual-grid > div:nth-child(4n+4) { /* Ambiente de Negócios, Pessoas */
             transform: rotate(1deg);
             z-index: 5;
-            margin-left: -0.5rem;
         }
         .orientadores-visual-grid > div:hover {
             transform: scale(1.08) rotate(0deg); /* Aumenta a escala e remove rotação no hover */
             z-index: 10;
             box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-            margin: 0.25rem; /* Mantém a margem para não "pular" muito */
         }
         .orientadores-visual-grid .orientador-icon {
-            font-size: 1.6rem; /* Tamanho do ícone */
+            font-size: 1.8rem; /* Tamanho do ícone */
             margin-right: 0.6rem;
         }
 
@@ -784,7 +779,7 @@
             "Inteligência e Dados": "📊",
             "Ambiente de Negócios": "🌐",
             "Sociedade": "🤝",
-            "Tecnologia": "�",
+            "Tecnologia": "💻",
             "Processos Internos": "⚙️",
             "Pessoas": "👥"
         };
@@ -1044,4 +1039,3 @@
     </script>
 </body>
 </html>
-�
