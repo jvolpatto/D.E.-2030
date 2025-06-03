@@ -39,7 +39,7 @@
         .orientadores-visual-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0.5rem; /* Espaçamento entre os itens */
+            gap: 0; /* Removido o gap para controlar com margem nos filhos */
             margin-top: 1rem;
             position: relative; /* Para contexto de z-index */
         }
@@ -54,7 +54,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: transform 0.2s ease-in-out, z-index 0s;
             position: relative; /* Para z-index */
-            margin: 0.5rem; /* Margem para separar e evitar sobreposição visual */
+            margin: 0.25rem; /* Pequena margem para separar visualmente */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -65,23 +65,28 @@
         .orientadores-visual-grid > div:nth-child(4n+1) { /* Jornada do Cliente, Sociedade */
             transform: rotate(-2deg);
             z-index: 8;
+            margin-right: -0.5rem; /* Ajuste para sobreposição */
         }
         .orientadores-visual-grid > div:nth-child(4n+2) { /* Soluções, Tecnologia */
             transform: rotate(2deg);
             z-index: 7;
+            margin-left: -0.5rem; /* Ajuste para sobreposição */
         }
         .orientadores-visual-grid > div:nth-child(4n+3) { /* Inteligência e Dados, Processos Internos */
             transform: rotate(-1deg);
             z-index: 6;
+            margin-right: -0.5rem;
         }
         .orientadores-visual-grid > div:nth-child(4n+4) { /* Ambiente de Negócios, Pessoas */
             transform: rotate(1deg);
             z-index: 5;
+            margin-left: -0.5rem;
         }
         .orientadores-visual-grid > div:hover {
             transform: scale(1.08) rotate(0deg); /* Aumenta a escala e remove rotação no hover */
             z-index: 10;
             box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            margin: 0.25rem; /* Mantém a margem para não "pular" muito */
         }
         .orientadores-visual-grid .orientador-icon {
             font-size: 1.6rem; /* Tamanho do ícone */
@@ -308,10 +313,10 @@
         <!-- Seção: Propósito, Visão de Futuro, Entrega de Valor, Valores (Layout Aprimorado) -->
         <section id="proposito-visao" class="relative bg-white text-texto-padrao rounded-xl shadow-2xl p-8 mb-12 overflow-hidden">
             <div class="relative z-10">
-                <h2 class="text-4xl font-campuni font-bold text-azul-escuro mb-6 text-center">Nosso Fundamento Estratégico</h2>
+                <h2 class="text-4xl font-campuni font-bold text-azul-escuro mb-6 text-center">Direcionamento Estratégico 2030</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-                    <div class="flex flex-col justify-between">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div>
                         <div class="concept-card" style="background-color: #F0F4F8;">
                             <span class="concept-icon" style="color: #2A4FDB;">🎯</span>
                             <h3 style="color: #2A4FDB;">Propósito</h3>
@@ -779,7 +784,7 @@
             "Inteligência e Dados": "📊",
             "Ambiente de Negócios": "🌐",
             "Sociedade": "🤝",
-            "Tecnologia": "💻",
+            "Tecnologia": "�",
             "Processos Internos": "⚙️",
             "Pessoas": "👥"
         };
@@ -1039,3 +1044,4 @@
     </script>
 </body>
 </html>
+�
