@@ -27,11 +27,72 @@
             margin-bottom: 1rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            position: relative; /* Necessário para z-index e transform */
+            z-index: 1; /* Padrão para cards */
         }
         .card-orientador:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            z-index: 10; /* Traz o card para frente no hover */
         }
+        /* Estilos específicos para o layout de orientadores na seção de Propósito/Visão */
+        .orientadores-visual-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0; /* Remove gap para controlar com margem */
+            margin-top: 1rem;
+            position: relative; /* Para contexto de z-index */
+        }
+        .orientadores-visual-grid > div {
+            background-color: #2A4FDB; /* Azul escuro */
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease-in-out, margin 0.2s ease-in-out, z-index 0s;
+            position: relative; /* Para z-index */
+            margin: 0.25rem; /* Pequena margem para separar visualmente */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            font-size: 0.9rem;
+        }
+        /* Aplica rotações e margens negativas para o efeito escalonado */
+        .orientadores-visual-grid > div:nth-child(4n+1) { /* Jornada do Cliente, Sociedade */
+            transform: rotate(-3deg);
+            margin-right: -1.5rem; /* Mais sobreposição */
+            z-index: 8;
+        }
+        .orientadores-visual-grid > div:nth-child(4n+2) { /* Soluções, Tecnologia */
+            transform: rotate(3deg);
+            margin-left: -1.5rem; /* Mais sobreposição */
+            z-index: 7;
+        }
+        .orientadores-visual-grid > div:nth-child(4n+3) { /* Inteligência e Dados, Processos Internos */
+            transform: rotate(-1deg);
+            margin-right: -1rem;
+            z-index: 6;
+        }
+        .orientadores-visual-grid > div:nth-child(4n+4) { /* Ambiente de Negócios, Pessoas */
+            transform: rotate(1deg);
+            margin-left: -1rem;
+            z-index: 5;
+        }
+        .orientadores-visual-grid > div:hover {
+            transform: scale(1.1) rotate(0deg); /* Aumenta a escala e remove rotação no hover */
+            z-index: 10;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            margin: 0.25rem; /* Mantém a margem para não "pular" muito */
+        }
+        .orientadores-visual-grid .orientador-icon {
+            font-size: 1.5rem; /* Tamanho do ícone */
+            margin-right: 0.5rem;
+        }
+
         .nav-item {
             padding: 0.5rem 1rem;
             border-radius: 0.375rem;
@@ -45,7 +106,7 @@
         .chart-container-small {
             position: relative;
             width: 100%;
-            max-width: 600px; /* Aumentado para dar mais espaço aos rótulos */
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             height: 250px;
@@ -67,18 +128,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            min-height: 250px; /* Garante altura mínima para alinhamento */
+            min-height: 250px;
         }
         .etapa-card .icon {
-            font-size: 3rem; /* Tamanho maior para os ícones */
+            font-size: 3rem;
             margin-bottom: 1rem;
-            color: #2A4FDB; /* Azul escuro */
+            color: #2A4FDB;
         }
         .etapa-card h3 {
             font-family: 'Campuni', sans-serif;
-            font-size: 1.75rem; /* text-3xl */
+            font-size: 1.75rem;
             font-weight: bold;
-            color: #E57764; /* Laranja */
+            color: #E57764;
             margin-bottom: 0.75rem;
         }
         .etapa-card ul {
@@ -97,7 +158,7 @@
         .etapa-separator {
             width: 100%;
             height: 2px;
-            background-color: #BF64E5; /* Lilas */
+            background-color: #BF64E5;
             margin: 1.5rem 0;
             position: relative;
         }
@@ -114,13 +175,12 @@
         .etapa-separator::before { left: -5px; }
         .etapa-separator::after { right: -5px; }
 
-        /* Ajuste para o layout de etapas em telas menores */
         @media (max-width: 767px) {
             .etapa-card {
-                margin-bottom: 2rem; /* Espaçamento maior entre cards em mobile */
+                margin-bottom: 2rem;
             }
             .etapa-separator {
-                display: none; /* Esconde o separador horizontal em mobile */
+                display: none;
             }
             .etapa-flow-container {
                 flex-direction: column;
@@ -128,6 +188,52 @@
             .etapa-flow-item {
                 width: 100%;
             }
+        }
+        .intro-section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .intro-section-card h3 {
+            font-family: 'Campuni', sans-serif;
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #2A4FDB;
+            margin-bottom: 1rem;
+        }
+        .intro-section-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #374151;
+            margin-bottom: 1.5rem;
+        }
+        .intro-values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .intro-value-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #f8fafc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .intro-value-item .value-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .intro-value-item .value-text {
+            font-family: 'Figtree', sans-serif;
+            font-weight: bold;
+            color: #2A4FDB;
+            font-size: 0.9rem;
         }
     </style>
     <script>
@@ -159,6 +265,7 @@
             <div class="flex items-center justify-between h-20">
                 <h1 class="text-3xl font-campuni font-bold text-azul-escuro">Direcionamento Estratégico 2030</h1>
                 <nav class="hidden md:flex space-x-1">
+                    <a href="#proposito-visao" class="nav-item font-semibold">Propósito</a>
                     <a href="#introducao-processo" class="nav-item font-semibold">Processo</a>
                     <a href="#intro-manifesto" class="nav-item font-semibold">Início</a>
                     <a href="#orientadores" class="nav-item font-semibold">Orientadores</a>
@@ -169,6 +276,88 @@
     </header>
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Seção: Propósito, Visão de Futuro, Entrega de Valor, Valores -->
+        <section id="proposito-visao" class="relative bg-white text-texto-padrao rounded-xl shadow-2xl p-8 mb-12 overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-4xl font-campuni font-bold text-azul-escuro mb-6 text-center">Nosso Fundamento Estratégico</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div>
+                        <div class="intro-section-card">
+                            <h3 class="text-azul-escuro">Propósito</h3>
+                            <p>Transformar os pequenos negócios em protagonistas do desenvolvimento sustentável do Paraná.</p>
+                        </div>
+                        <div class="intro-section-card">
+                            <h3 class="text-azul-escuro">Visão de Futuro</h3>
+                            <p>Ser referência na promoção do empreendedorismo e geração de valor para os pequenos negócios.</p>
+                        </div>
+                        <div class="intro-section-card">
+                            <h3 class="text-azul-escuro">Entrega de Valor</h3>
+                            <p>Nós somos viabilizadores de sonhos, fornecemos uma experiência única através de soluções e produtos customizados, que ajudam nossos clientes e a sociedade a alcançarem crescimento e desenvolvimento.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="intro-section-card h-full flex flex-col justify-between">
+                            <h3 class="text-azul-escuro">Orientadores Estratégicos</h3>
+                            <div class="orientadores-visual-grid">
+                                <div style="background-color: #65B7FB; z-index: 8; transform: rotate(-3deg); margin-right: -1.5rem;">
+                                    <span class="orientador-icon">🚶‍♀️</span>Jornada do Cliente
+                                </div>
+                                <div style="background-color: #E57764; z-index: 7; transform: rotate(3deg); margin-left: -1.5rem;">
+                                    <span class="orientador-icon">💡</span>Soluções
+                                </div>
+                                <div style="background-color: #BF64E5; z-index: 6; transform: rotate(-1deg); margin-right: -1rem; margin-top: 0.5rem;">
+                                    <span class="orientador-icon">📊</span>Inteligência e Dados
+                                </div>
+                                <div style="background-color: #2A4FDB; z-index: 5; transform: rotate(1deg); margin-left: -1rem; margin-top: 0.5rem;">
+                                    <span class="orientador-icon">🌐</span>Ambiente de Negócios
+                                </div>
+                                <div style="background-color: #65B7FB; z-index: 4; transform: rotate(-2deg); margin-right: -1.5rem; margin-top: 0.5rem;">
+                                    <span class="orientador-icon">🤝</span>Sociedade
+                                </div>
+                                <div style="background-color: #E57764; z-index: 3; transform: rotate(2deg); margin-left: -1.5rem; margin-top: 0.5rem;">
+                                    <span class="orientador-icon">💻</span>Tecnologia
+                                </div>
+                                <div style="background-color: #BF64E5; z-index: 2; transform: rotate(-0.5deg); margin-right: -1rem; margin-top: 0.5rem;">
+                                    <span class="orientador-icon">⚙️</span>Processos Internos
+                                </div>
+                                <div style="background-color: #2A4FDB; z-index: 1; transform: rotate(0.5deg); margin-left: -1rem; margin-top: 0.5rem;">
+                                    <span class="orientador-icon">👥</span>Pessoas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="intro-section-card mt-8">
+                    <h3 class="text-azul-escuro">Nossos Valores</h3>
+                    <div class="intro-values-grid">
+                        <div class="intro-value-item">
+                            <span class="value-icon" style="color: #E57764;">❤️</span>
+                            <span class="value-text">PAIXÃO</span>
+                        </div>
+                        <div class="intro-value-item">
+                            <span class="value-icon" style="color: #65B7FB;">🤝</span>
+                            <span class="value-text">COMPROMISSO</span>
+                        </div>
+                        <div class="intro-value-item">
+                            <span class="value-icon" style="color: #BF64E5;">⚖️</span>
+                            <span class="value-text">COERÊNCIA</span>
+                        </div>
+                        <div class="intro-value-item">
+                            <span class="value-icon" style="color: #2A4FDB;">🌟</span>
+                            <span class="value-text">EXCELÊNCIA</span>
+                        </div>
+                        <div class="intro-value-item">
+                            <span class="value-icon" style="color: #E57764;">💡</span>
+                            <span class="value-text">INOVAÇÃO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Fim da Nova Seção: Propósito, Visão de Futuro, Entrega de Valor, Valores -->
 
         <!-- Nova Seção: Introdução ao Processo de Direcionamento Estratégico 2030 - Layout Moderno -->
         <section id="introducao-processo" class="relative bg-white text-texto-padrao rounded-xl shadow-2xl p-8 mb-12 overflow-hidden">
@@ -182,7 +371,7 @@
                     <div class="etapa-card flex-1">
                         <span class="icon">👁️</span>
                         <h3 class="etapa-title">Etapa 1: Ampliação da Visão</h3>
-                        <ul class="list-disc list-inside space-y-1 text-base">
+                        <ul class="list-none space-y-1 text-base text-left w-full max-w-xs mx-auto">
                             <li><span class="text-lilas mr-2">●</span>Palestras com grandes especialistas do mercado para apresentarem suas Visões de Futuro;</li>
                             <li><span class="text-lilas mr-2">●</span>Ouvir as Partes Interessadas;</li>
                         </ul>
@@ -193,7 +382,7 @@
                     <div class="etapa-card flex-1">
                         <span class="icon">🛠️</span>
                         <h3 class="etapa-title">Etapa 2: Construção do Direcionamento</h3>
-                        <ul class="list-disc list-inside space-y-1 text-base">
+                        <ul class="list-none space-y-1 text-base text-left w-full max-w-xs mx-auto">
                             <li><span class="text-lilas mr-2">●</span>6 oficinas com participação de Gerentes, coordenadores, gestores de projetos e convidados;</li>
                             <li><span class="text-lilas mr-2">●</span>Metodologia e entregáveis previamente definidos: Priorização dos Temas, O futuro que queremos, FOFA, Entrega de Valor, Objetivos Estratégicos e Indicadores Estratégicos;</li>
                             <li><span class="text-lilas mr-2">●</span>Construção dos Orientadores Estratégicos, Manifesto de Futuro;</li>
@@ -205,7 +394,7 @@
                     <div class="etapa-card flex-1">
                         <span class="icon">🗺️</span>
                         <h3 class="etapa-title">Etapa 3: Mapa Estratégico e Tradução</h3>
-                        <ul class="list-disc list-inside space-y-1 text-base">
+                        <ul class="list-none space-y-1 text-base text-left w-full max-w-xs mx-auto">
                             <li><span class="text-lilas mr-2">●</span>Construção do Mapa Estratégico;</li>
                             <li><span class="text-lilas mr-2">●</span>Desdobramento do Mapa Estratégico;</li>
                             <li><span class="text-lilas mr-2">●</span>Grupos de Trabalho;</li>
