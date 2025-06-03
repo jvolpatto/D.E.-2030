@@ -39,7 +39,7 @@
         .orientadores-visual-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0; /* Remove gap para controlar com margem */
+            gap: 0.5rem; /* Espaçamento entre os itens */
             margin-top: 1rem;
             position: relative; /* Para contexto de z-index */
         }
@@ -52,45 +52,40 @@
             font-family: 'Figtree', sans-serif;
             font-weight: 600;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease-in-out, margin 0.2s ease-in-out, z-index 0s;
+            transition: transform 0.2s ease-in-out, z-index 0s;
             position: relative; /* Para z-index */
-            margin: 0.25rem; /* Pequena margem para separar visualmente */
+            margin: 0.5rem; /* Margem para separar e evitar sobreposição visual */
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.2;
-            font-size: 0.9rem;
+            line-height: 1.3; /* Aumentado para melhor leitura */
+            font-size: 1rem; /* Aumentado a fonte */
         }
-        /* Aplica rotações e margens negativas para o efeito escalonado */
+        /* Aplica rotações sutis e z-index para o efeito escalonado */
         .orientadores-visual-grid > div:nth-child(4n+1) { /* Jornada do Cliente, Sociedade */
-            transform: rotate(-3deg);
-            margin-right: -1.5rem; /* Mais sobreposição */
+            transform: rotate(-2deg);
             z-index: 8;
         }
         .orientadores-visual-grid > div:nth-child(4n+2) { /* Soluções, Tecnologia */
-            transform: rotate(3deg);
-            margin-left: -1.5rem; /* Mais sobreposição */
+            transform: rotate(2deg);
             z-index: 7;
         }
         .orientadores-visual-grid > div:nth-child(4n+3) { /* Inteligência e Dados, Processos Internos */
             transform: rotate(-1deg);
-            margin-right: -1rem;
             z-index: 6;
         }
         .orientadores-visual-grid > div:nth-child(4n+4) { /* Ambiente de Negócios, Pessoas */
             transform: rotate(1deg);
-            margin-left: -1rem;
             z-index: 5;
         }
         .orientadores-visual-grid > div:hover {
-            transform: scale(1.1) rotate(0deg); /* Aumenta a escala e remove rotação no hover */
+            transform: scale(1.08) rotate(0deg); /* Aumenta a escala e remove rotação no hover */
             z-index: 10;
             box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-            margin: 0.25rem; /* Mantém a margem para não "pular" muito */
         }
         .orientadores-visual-grid .orientador-icon {
-            font-size: 1.5rem; /* Tamanho do ícone */
-            margin-right: 0.5rem;
+            font-size: 1.6rem; /* Tamanho do ícone */
+            margin-right: 0.6rem;
         }
 
         .nav-item {
@@ -235,6 +230,39 @@
             color: #2A4FDB;
             font-size: 0.9rem;
         }
+        /* Novo estilo para os cards de Propósito/Visão/Entrega de Valor */
+        .concept-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px; /* Altura mínima para consistência */
+            transition: transform 0.3s ease-in-out;
+        }
+        .concept-card:hover {
+            transform: translateY(-8px);
+        }
+        .concept-card .concept-icon {
+            font-size: 3.5rem; /* Ícone maior */
+            margin-bottom: 0.75rem;
+        }
+        .concept-card h3 {
+            font-family: 'Campuni', sans-serif;
+            font-size: 1.8rem; /* Título maior */
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .concept-card p {
+            font-size: 1rem; /* Texto do corpo */
+            line-height: 1.5;
+            color: #374151;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -277,23 +305,26 @@
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
 
-        <!-- Seção: Propósito, Visão de Futuro, Entrega de Valor, Valores -->
+        <!-- Seção: Propósito, Visão de Futuro, Entrega de Valor, Valores (Layout Aprimorado) -->
         <section id="proposito-visao" class="relative bg-white text-texto-padrao rounded-xl shadow-2xl p-8 mb-12 overflow-hidden">
             <div class="relative z-10">
                 <h2 class="text-4xl font-campuni font-bold text-azul-escuro mb-6 text-center">Nosso Fundamento Estratégico</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                    <div>
-                        <div class="intro-section-card">
-                            <h3 class="text-azul-escuro">Propósito</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                    <div class="flex flex-col justify-between">
+                        <div class="concept-card" style="background-color: #F0F4F8;">
+                            <span class="concept-icon" style="color: #2A4FDB;">🎯</span>
+                            <h3 style="color: #2A4FDB;">Propósito</h3>
                             <p>Transformar os pequenos negócios em protagonistas do desenvolvimento sustentável do Paraná.</p>
                         </div>
-                        <div class="intro-section-card">
-                            <h3 class="text-azul-escuro">Visão de Futuro</h3>
+                        <div class="concept-card" style="background-color: #F0F4F8;">
+                            <span class="concept-icon" style="color: #65B7FB;">🔭</span>
+                            <h3 style="color: #65B7FB;">Visão de Futuro</h3>
                             <p>Ser referência na promoção do empreendedorismo e geração de valor para os pequenos negócios.</p>
                         </div>
-                        <div class="intro-section-card">
-                            <h3 class="text-azul-escuro">Entrega de Valor</h3>
+                        <div class="concept-card" style="background-color: #F0F4F8;">
+                            <span class="concept-icon" style="color: #E57764;">🎁</span>
+                            <h3 style="color: #E57764;">Entrega de Valor</h3>
                             <p>Nós somos viabilizadores de sonhos, fornecemos uma experiência única através de soluções e produtos customizados, que ajudam nossos clientes e a sociedade a alcançarem crescimento e desenvolvimento.</p>
                         </div>
                     </div>
@@ -301,28 +332,28 @@
                         <div class="intro-section-card h-full flex flex-col justify-between">
                             <h3 class="text-azul-escuro">Orientadores Estratégicos</h3>
                             <div class="orientadores-visual-grid">
-                                <div style="background-color: #65B7FB; z-index: 8; transform: rotate(-3deg); margin-right: -1.5rem;">
+                                <div style="background-color: #65B7FB; z-index: 8; transform: rotate(-2deg);">
                                     <span class="orientador-icon">🚶‍♀️</span>Jornada do Cliente
                                 </div>
-                                <div style="background-color: #E57764; z-index: 7; transform: rotate(3deg); margin-left: -1.5rem;">
+                                <div style="background-color: #E57764; z-index: 7; transform: rotate(2deg);">
                                     <span class="orientador-icon">💡</span>Soluções
                                 </div>
-                                <div style="background-color: #BF64E5; z-index: 6; transform: rotate(-1deg); margin-right: -1rem; margin-top: 0.5rem;">
+                                <div style="background-color: #BF64E5; z-index: 6; transform: rotate(-1deg);">
                                     <span class="orientador-icon">📊</span>Inteligência e Dados
                                 </div>
-                                <div style="background-color: #2A4FDB; z-index: 5; transform: rotate(1deg); margin-left: -1rem; margin-top: 0.5rem;">
+                                <div style="background-color: #2A4FDB; z-index: 5; transform: rotate(1deg);">
                                     <span class="orientador-icon">🌐</span>Ambiente de Negócios
                                 </div>
-                                <div style="background-color: #65B7FB; z-index: 4; transform: rotate(-2deg); margin-right: -1.5rem; margin-top: 0.5rem;">
+                                <div style="background-color: #65B7FB; z-index: 4; transform: rotate(-2.5deg);">
                                     <span class="orientador-icon">🤝</span>Sociedade
                                 </div>
-                                <div style="background-color: #E57764; z-index: 3; transform: rotate(2deg); margin-left: -1.5rem; margin-top: 0.5rem;">
+                                <div style="background-color: #E57764; z-index: 3; transform: rotate(2.5deg);">
                                     <span class="orientador-icon">💻</span>Tecnologia
                                 </div>
-                                <div style="background-color: #BF64E5; z-index: 2; transform: rotate(-0.5deg); margin-right: -1rem; margin-top: 0.5rem;">
+                                <div style="background-color: #BF64E5; z-index: 2; transform: rotate(-1.5deg);">
                                     <span class="orientador-icon">⚙️</span>Processos Internos
                                 </div>
-                                <div style="background-color: #2A4FDB; z-index: 1; transform: rotate(0.5deg); margin-left: -1rem; margin-top: 0.5rem;">
+                                <div style="background-color: #2A4FDB; z-index: 1; transform: rotate(1.5deg);">
                                     <span class="orientador-icon">👥</span>Pessoas
                                 </div>
                             </div>
