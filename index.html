@@ -47,6 +47,17 @@
   </style>
 </head>
 <body>
+  <script>
+    // Banner imediato: ajuda quando nada aparece
+    (function(){
+      var splash = document.createElement('div');
+      splash.id = 'splash';
+      splash.style.cssText = 'position:fixed;inset:0;background:#0b1020;display:flex;align-items:center;justify-content:center;color:#e6e9f2;font:600 16px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;z-index:99999;';
+      splash.innerHTML = '🔧 Inicializando visualização...';
+      document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(splash); });
+      window.removeSplash = function(msg){ var el = document.getElementById('splash'); if(el){ el.parentNode.removeChild(el); } if(msg){ var box=document.createElement('div'); box.style.cssText='position:fixed;left:16px;right:16px;bottom:16px;background:#1b223e;color:#fff;border:1px solid #3a4370;border-radius:12px;padding:14px;z-index:99998;box-shadow:0 6px 24px #0006;font:14px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;'; box.innerHTML=msg; document.body.appendChild(box);} };
+    })();
+  </script>
   <div class="app">
     <header>
       <div class="title">📍 Mandala Interativa – Protótipo</div>
@@ -162,7 +173,44 @@
 
   (function bootstrap(){
     if(typeof window.d3 === 'undefined'){
-      console.error('D3 não carregou.');
+      console.error('D3 não carregou. Rodando fallback sem D3.');
+      removeSplash();
+      // Fallback sem D3: mostra árvore textual e instruções
+      var container = document.createElement('div');
+      container.style.cssText = 'position:fixed;inset:16px;background:#0f1630;border:1px solid #2a335c;border-radius:12px;color:#e6e9f2;padding:16px;overflow:auto;font:14px/1.5 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif';
+      container.innerHTML = '<h2 style="margin:0 0 8px">⚠️ Modo simples (D3 bloqueado)</h2>'+
+        '<div style="opacity:.85">Este ambiente parece estar bloqueando bibliotecas externas (CDNs). '+
+        'Mesmo assim, seus dados foram carregados abaixo. Para ver o gráfico interativo, publique em GitHub Pages ou rode um servidor local.<br><br>'+ 
+        '<b>Dica:</b> Settings → Pages → Deploy from a branch → main / root.</div>';
+      // Mostra hierarquia simples a partir de DATA_FROM_UPLOAD
+      function buildMap(rows){
+        var map = {};
+        (rows||[]).forEach(function(r){
+          var A=r.A||'?', B=r.B||'?', C=r.C||'?';
+          map[A] = map[A] || {}; map[A][B] = map[A][B] || []; map[A][B].push(C);
+        });
+        return map;
+      }
+      var data = window.DATA_FROM_UPLOAD || [];
+      var tree = buildMap(data);
+      var html = '<div style="margin-top:12px">';
+      Object.keys(tree).forEach(function(cli){
+        html += '<div style="margin:8px 0"><b>'+cli+'</b><ul style="margin:6px 0 0 18px">';
+        Object.keys(tree[cli]).forEach(function(coord){
+          html += '<li>'+coord+'<ul style="margin:6px 0 0 18px">';
+          tree[cli][coord].forEach(function(desd){ html += '<li>'+desd+'</li>'; });
+          html += '</ul></li>';
+        });
+        html += '</ul></div>';
+      });
+      html += '</div>';
+      container.innerHTML += html;
+      document.body.appendChild(container);
+      // Instruções rápidas
+      var help = document.createElement('div');
+      help.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;background:#1b223e;color:#fff;border:1px solid #3a4370;border-radius:12px;padding:14px;z-index:99998;box-shadow:0 6px 24px #0006';
+      help.innerHTML = 'Para executar com o gráfico: <code>python -m http.server 8080</code> ou publique no GitHub Pages.';
+      document.body.appendChild(help);
       return;
     }
 
@@ -309,6 +357,8 @@
       selectNode(root, false);
       updateLabels();
       initialized = true;
+      // tudo certo, remove o splash de carregamento
+      removeSplash();
     }
 
     function selectNode(d, zoom){
@@ -477,7 +527,8 @@
       // Overlay de erros de script
       window.addEventListener('error', function(ev){
         var detail = (ev && ev.message) ? ev.message : 'Erro de script';
-        showHelp('Ocorreu um erro de execução: <code>'+detail+'</code><br>Abra o Console do navegador (F12) para detalhes. Se estiver usando GitHub Pages, confirme que as CDNs estão liberadas e tente recarregar.');
+        removeSplash('<b>Erro detectado:</b> <code>'+detail+'</code><br>Abra o Console (F12) para detalhes.');
+      });
       });
     })();
   </script>
