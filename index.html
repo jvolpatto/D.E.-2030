@@ -453,6 +453,33 @@
     try{ render(rowsToHierarchy(mapABCD(window.DATA_FROM_UPLOAD || []))); }
     catch(err){ console.error('Falha no render inicial:', err); }
   })();
+    </script>
+  <script>
+    // Watchdog para ambientes onde nada renderiza (ex.: visualização do arquivo no site do GitHub, não no Pages)
+    (function(){
+      function showHelp(msg){
+        var box = document.createElement('div');
+        box.style.cssText = 'position:fixed;inset:auto 16px 16px 16px;background:#1b223e;color:#fff;border:1px solid #3a4370;border-radius:12px;padding:14px;z-index:99999;box-shadow:0 6px 24px #0006;font:14px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;';
+        box.innerHTML = '<b>Não apareceu nada?</b><br>'+msg;
+        document.body.appendChild(box);
+      }
+      // Se após 1800ms não houver paths, avisa o usuário
+      setTimeout(function(){
+        try{
+          var svg = document.querySelector('#viz');
+          var paths = svg ? svg.querySelectorAll('path').length : 0;
+          if(paths === 0){
+            showHelp('Se você está vendo este arquivo pela <i>página do repositório</i> no GitHub, o HTML não executa scripts por segurança. <br><br><b>Como publicar:</b><br>1) Vá em <i>Settings → Pages</i>.<br>2) Em <i>Build and deployment</i>, selecione a branch (ex.: <b>main</b>) e a pasta <b>root</b>.<br>3) Salve. Acesse a URL do GitHub Pages, algo como <code>https://&lt;seu-usuário&gt;.github.io/&lt;repo&gt;/</code>.<br><br>Alternativa local: abra com um servidor estático (ex.: <code>npx serve</code>) em vez de <code>file://</code>.');
+          }
+        }catch(e){ /* ignore */ }
+      }, 1800);
+
+      // Overlay de erros de script
+      window.addEventListener('error', function(ev){
+        var detail = (ev && ev.message) ? ev.message : 'Erro de script';
+        showHelp('Ocorreu um erro de execução: <code>'+detail+'</code><br>Abra o Console do navegador (F12) para detalhes. Se estiver usando GitHub Pages, confirme que as CDNs estão liberadas e tente recarregar.');
+      });
+    })();
   </script>
 </body>
 </html>
