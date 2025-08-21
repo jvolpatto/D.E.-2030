@@ -1,1041 +1,538 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infográfico: Direcionamento Estratégico Sebrae/PR 2030</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <style>
-        body {
-            font-family: 'Figtree', sans-serif;
-            background-color: #f0f4f8;
-            scroll-behavior: smooth; /* Rolagem suave para âncoras */
-        }
-        .font-campuni {
-            font-family: 'Oswald', sans-serif;
-        }
-        .font-figtree {
-            font-family: 'Figtree', sans-serif;
-        }
-        .card-orientador {
-            background-color: #ffffff;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            position: relative; /* Necessário para z-index e transform */
-            z-index: 1; /* Padrão para cards */
-        }
-        .card-orientador:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            z-index: 10; /* Traz o card para frente no hover */
-        }
-        /* Estilos específicos para o layout de orientadores na seção de Propósito/Visão */
-        .orientadores-visual-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1rem; /* Aumentado o gap para separar os cards */
-            margin-top: 1rem;
-            position: relative; /* Para contexto de z-index */
-        }
-        .orientadores-visual-grid > div {
-            background-color: #2A4FDB; /* Azul escuro */
-            color: white;
-            padding: 1rem 1.5rem; /* Aumentado o padding para cards maiores */
-            border-radius: 0.5rem;
-            text-align: center;
-            font-family: 'Figtree', sans-serif;
-            font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease-in-out, z-index 0s;
-            position: relative; /* Para z-index */
-            /* Removido margens negativas aqui para evitar sobreposição */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.4; /* Aumentado para melhor leitura */
-            font-size: 1.1rem; /* Aumentado a fonte */
-        }
-        /* Aplica rotações sutis e z-index para o efeito escalonado */
-        .orientadores-visual-grid > div:nth-child(4n+1) { /* Jornada do Cliente, Sociedade */
-            transform: rotate(-2deg);
-            z-index: 8;
-        }
-        .orientadores-visual-grid > div:nth-child(4n+2) { /* Soluções, Tecnologia */
-            transform: rotate(2deg);
-            z-index: 7;
-        }
-        .orientadores-visual-grid > div:nth-child(4n+3) { /* Inteligência e Dados, Processos Internos */
-            transform: rotate(-1deg);
-            z-index: 6;
-        }
-        .orientadores-visual-grid > div:nth-child(4n+4) { /* Ambiente de Negócios, Pessoas */
-            transform: rotate(1deg);
-            z-index: 5;
-        }
-        .orientadores-visual-grid > div:hover {
-            transform: scale(1.08) rotate(0deg); /* Aumenta a escala e remove rotação no hover */
-            z-index: 10;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-        }
-        .orientadores-visual-grid .orientador-icon {
-            font-size: 1.8rem; /* Tamanho do ícone */
-            margin-right: 0.6rem;
-        }
-
-        .nav-item {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.3s, color 0.3s;
-            color: #2A4FDB;
-        }
-        .nav-item:hover {
-            background-color: #E0E7FF;
-            color: #1E40AF;
-        }
-        .chart-container-small {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 250px;
-            max-height: 300px;
-        }
-        @media (min-width: 768px) {
-            .chart-container-small {
-                height: 250px;
-                max-height: 300px;
-            }
-        }
-        .etapa-card {
-            background-color: #ffffff;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 250px;
-        }
-        .etapa-card .icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #2A4FDB;
-        }
-        .etapa-card h3 {
-            font-family: 'Campuni', sans-serif;
-            font-size: 1.75rem;
-            font-weight: bold;
-            color: #E57764;
-            margin-bottom: 0.75rem;
-        }
-        .etapa-card ul {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            width: 100%;
-            max-width: 250px;
-            margin-top: 0.5rem;
-        }
-        .etapa-card ul li {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #374151;
-        }
-        .etapa-separator {
-            width: 100%;
-            height: 2px;
-            background-color: #BF64E5;
-            margin: 1.5rem 0;
-            position: relative;
-        }
-        .etapa-separator::before, .etapa-separator::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            background-color: #BF64E5;
-            border-radius: 50%;
-        }
-        .etapa-separator::before { left: -5px; }
-        .etapa-separator::after { right: -5px; }
-
-        @media (max-width: 767px) {
-            .etapa-card {
-                margin-bottom: 2rem;
-            }
-            .etapa-separator {
-                display: none;
-            }
-            .etapa-flow-container {
-                flex-direction: column;
-            }
-            .etapa-flow-item {
-                width: 100%;
-            }
-        }
-        .intro-section-card {
-            background-color: #ffffff;
-            border-radius: 0.75rem;
-            padding: 2.5rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-        .intro-section-card h3 {
-            font-family: 'Campuni', sans-serif;
-            font-size: 2.25rem;
-            font-weight: bold;
-            color: #2A4FDB;
-            margin-bottom: 1rem;
-        }
-        .intro-section-card p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #374151;
-            margin-bottom: 1.5rem;
-        }
-        .intro-values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        .intro-value-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            background-color: #f8fafc;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        .intro-value-item .value-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .intro-value-item .value-text {
-            font-family: 'Figtree', sans-serif;
-            font-weight: bold;
-            color: #2A4FDB;
-            font-size: 0.9rem;
-        }
-        /* Novo estilo para os cards de Propósito/Visão/Entrega de Valor */
-        .concept-card {
-            background-color: #ffffff;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
-            text-align: center;
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 180px; /* Altura mínima para consistência */
-            transition: transform 0.3s ease-in-out;
-        }
-        .concept-card:hover {
-            transform: translateY(-8px);
-        }
-        .concept-card .concept-icon {
-            font-size: 3.5rem; /* Ícone maior */
-            margin-bottom: 0.75rem;
-        }
-        .concept-card h3 {
-            font-family: 'Campuni', sans-serif;
-            font-size: 1.8rem; /* Título maior */
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-        .concept-card p {
-            font-size: 1rem; /* Texto do corpo */
-            line-height: 1.5;
-            color: #374151;
-        }
-    </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        figtree: ['Figtree', 'sans-serif'],
-                        campuni: ['Oswald', 'sans-serif'],
-                    },
-                    colors: {
-                        'azul-claro': '#65B7FB',
-                        'azul-escuro': '#2A4FDB',
-                        'lilas': '#BF64E5',
-                        'laranja': '#E57764',
-                        'background-page': '#f0f4f8',
-                        'texto-padrao': '#374151',
-                        'texto-cabecalho': '#111827',
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mandala Interativa – Protótipo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020; /* fundo escuro elegante */
+      --panel:#0f1630;
+      --panel-2:#0c1228;
+      --text:#e6e9f2;
+      --muted:#a9b1c7;
+      --accent:#0077c8; /* Sebrae blue */
+      --chip:#101834;
+    }
+    html,body{height:100%;}
+    body{ margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; color:var(--text); background:radial-gradient(1200px 1200px at 85% -20%, #1e2a55 0%, #0b1020 55%);} 
+    .app{display:grid; grid-template-columns: 1fr 420px; gap:16px; height:100vh; padding:16px; box-sizing:border-box;}
+    header{grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); border:1px solid rgba(255,255,255,.06); border-radius:16px; backdrop-filter: blur(6px);}    
+    header .title{font-weight:700; letter-spacing:.3px}
+    .controls{display:flex; flex-wrap:wrap; gap:8px}
+    button, .file-label{appearance:none; border:none; padding:10px 12px; border-radius:12px; background:var(--chip); color:var(--text); cursor:pointer; font-weight:600; border:1px solid rgba(255,255,255,.06);} 
+    button:hover,.file-label:hover{filter:brightness(1.1);} 
+    .file-label{display:inline-flex; align-items:center; gap:8px}
+    input[type="file"]{display:none}
+    .left{position:relative; background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; display:flex; align-items:center; justify-content:center;}
+    .right{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:14px; overflow:auto}
+    .card{background:var(--panel-2); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:12px}
+    .info-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px}
+    .name{font-size:18px; font-weight:700}
+    .crumb{color:var(--muted); font-size:12px}
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .chip{background:var(--chip); border:1px solid rgba(255,255,255,.06); padding:6px 8px; border-radius:999px; font-size:12px}
+    .list{display:grid; gap:8px; margin-top:10px}
+    .list button{width:100%; text-align:left}
+    .tooltip{position:absolute; pointer-events:none; background:#000c; color:#fff; padding:6px 8px; border-radius:8px; font-size:12px; transform:translate(-50%,-120%); white-space:nowrap; opacity:0; transition:opacity .15s}
+    .legend{position:absolute; left:14px; bottom:14px; display:flex; gap:6px; flex-wrap:wrap; max-width:75%}
+    .legend span{display:inline-flex; align-items:center; gap:6px; background:var(--chip); border:1px solid rgba(255,255,255,.06); padding:6px 8px; border-radius:999px; font-size:12px}
+    .legend i{width:12px; height:12px; border-radius:3px; display:inline-block}
+    .hint{font-size:12px; color:var(--muted); margin-top:8px}
+    .kbd{border:1px solid rgba(255,255,255,.2); padding:2px 6px; border-radius:6px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; background:rgba(255,255,255,.06)}
+    @media (max-width: 980px){ .app{grid-template-columns:1fr; grid-auto-rows:minmax(0,1fr)} .left{height:56vh} }
+  </style>
 </head>
-<body class="bg-background-page text-texto-padrao font-figtree">
-
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <h1 class="text-3xl font-campuni font-bold text-azul-escuro">Direcionamento Estratégico 2030</h1>
-                <nav class="hidden md:flex space-x-1">
-                    <a href="#proposito-visao" class="nav-item font-semibold">Propósito</a>
-                    <a href="#introducao-processo" class="nav-item font-semibold">Processo</a>
-                    <a href="#intro-manifesto" class="nav-item font-semibold">Início</a>
-                    <a href="#orientadores" class="nav-item font-semibold">Orientadores</a>
-                    <a href="#metas-resultados" class="nav-item font-semibold">Metas e Resultados</a>
-                </nav>
-            </div>
-        </div>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">📍 Mandala Interativa – Protótipo</div>
+      <div class="controls">
+        <label class="file-label">
+          <input id="fileInput" type="file" accept=".json,.csv,.xlsx,.xls" />
+          📂 Carregar dados (JSON/CSV/Excel)
+        </label>
+        <button id="downloadJSON">⬇️ Baixar JSON</button>
+        <button id="exportPNG">🖼️ Exportar PNG</button>
+        <button id="resetZoom">🔎 Resetar Zoom</button>
+        <button id="runTests">▶️ Rodar Testes</button>
+      </div>
     </header>
 
-    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+    <section class="left">
+      <svg id="viz" width="100%" height="100%" viewBox="0 0 900 900"></svg>
+      <div id="tooltip" class="tooltip"></div>
+      <div id="legend" class="legend"></div>
+    </section>
 
-        <!-- Seção: Propósito, Visão de Futuro, Entrega de Valor, Valores (Layout Aprimorado) -->
-        <section id="proposito-visao" class="relative bg-white text-texto-padrao rounded-xl shadow-2xl p-8 mb-12 overflow-hidden">
-            <div class="relative z-10">
-                <h2 class="text-4xl font-campuni font-bold text-azul-escuro mb-6 text-center">Direcionamento Estratégico 2030</h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                    <div>
-                        <div class="concept-card" style="background-color: #F0F4F8;">
-                            <span class="concept-icon" style="color: #2A4FDB;">🎯</span>
-                            <h3 style="color: #2A4FDB;">Propósito</h3>
-                            <p>Transformar os pequenos negócios em protagonistas do desenvolvimento sustentável do Paraná.</p>
-                        </div>
-                        <div class="concept-card" style="background-color: #F0F4F8;">
-                            <span class="concept-icon" style="color: #65B7FB;">🔭</span>
-                            <h3 style="color: #65B7FB;">Visão de Futuro</h3>
-                            <p>Ser referência na promoção do empreendedorismo e geração de valor para os pequenos negócios.</p>
-                        </div>
-                        <div class="concept-card" style="background-color: #F0F4F8;">
-                            <span class="concept-icon" style="color: #E57764;">🎁</span>
-                            <h3 style="color: #E57764;">Entrega de Valor</h3>
-                            <p>Nós somos viabilizadores de sonhos, fornecemos uma experiência única através de soluções e produtos customizados, que ajudam nossos clientes e a sociedade a alcançarem crescimento e desenvolvimento.</p>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="intro-section-card h-full flex flex-col justify-between">
-                            <h3 class="text-azul-escuro">Orientadores Estratégicos</h3>
-                            <div class="orientadores-visual-grid">
-                                <div style="background-color: #65B7FB; z-index: 8; transform: rotate(-2deg);">
-                                    <span class="orientador-icon">🚶‍♀️</span>Jornada do Cliente
-                                </div>
-                                <div style="background-color: #E57764; z-index: 7; transform: rotate(2deg);">
-                                    <span class="orientador-icon">💡</span>Soluções
-                                </div>
-                                <div style="background-color: #BF64E5; z-index: 6; transform: rotate(-1deg);">
-                                    <span class="orientador-icon">📊</span>Inteligência e Dados
-                                </div>
-                                <div style="background-color: #2A4FDB; z-index: 5; transform: rotate(1deg);">
-                                    <span class="orientador-icon">🌐</span>Ambiente de Negócios
-                                </div>
-                                <div style="background-color: #65B7FB; z-index: 4; transform: rotate(-2.5deg);">
-                                    <span class="orientador-icon">🤝</span>Sociedade
-                                </div>
-                                <div style="background-color: #E57764; z-index: 3; transform: rotate(2.5deg);">
-                                    <span class="orientador-icon">💻</span>Tecnologia
-                                </div>
-                                <div style="background-color: #BF64E5; z-index: 2; transform: rotate(-1.5deg);">
-                                    <span class="orientador-icon">⚙️</span>Processos Internos
-                                </div>
-                                <div style="background-color: #2A4FDB; z-index: 1; transform: rotate(1.5deg);">
-                                    <span class="orientador-icon">👥</span>Pessoas
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="intro-section-card mt-8">
-                    <h3 class="text-azul-escuro">Nossos Valores</h3>
-                    <div class="intro-values-grid">
-                        <div class="intro-value-item">
-                            <span class="value-icon" style="color: #E57764;">❤️</span>
-                            <span class="value-text">PAIXÃO</span>
-                        </div>
-                        <div class="intro-value-item">
-                            <span class="value-icon" style="color: #65B7FB;">🤝</span>
-                            <span class="value-text">COMPROMISSO</span>
-                        </div>
-                        <div class="intro-value-item">
-                            <span class="value-icon" style="color: #BF64E5;">⚖️</span>
-                            <span class="value-text">COERÊNCIA</span>
-                        </div>
-                        <div class="intro-value-item">
-                            <span class="value-icon" style="color: #2A4FDB;">🌟</span>
-                            <span class="value-text">EXCELÊNCIA</span>
-                        </div>
-                        <div class="intro-value-item">
-                            <span class="value-icon" style="color: #E57764;">💡</span>
-                            <span class="value-text">INOVAÇÃO</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Fim da Nova Seção: Propósito, Visão de Futuro, Entrega de Valor, Valores -->
-
-        <!-- Nova Seção: Introdução ao Processo de Direcionamento Estratégico 2030 - Layout Moderno -->
-        <section id="introducao-processo" class="relative bg-white text-texto-padrao rounded-xl shadow-2xl p-8 mb-12 overflow-hidden">
-            <div class="relative z-10">
-                <h2 class="text-4xl font-campuni font-bold text-azul-escuro mb-6 text-center">Construção do Direcionamento Estratégico 2030</h2>
-                <p class="text-lg font-figtree leading-relaxed mb-8 text-center max-w-3xl mx-auto">
-                    Para o melhor desenvolvimento deste processo, dividimos nossa jornada em três etapas principais:
-                </p>
-
-                <div class="flex flex-col md:flex-row justify-center items-stretch gap-8">
-                    <div class="etapa-card flex-1">
-                        <span class="icon">👁️</span>
-                        <h3 class="etapa-title">Etapa 1: Ampliação da Visão</h3>
-                        <ul class="list-none space-y-1 text-base text-left w-full max-w-xs mx-auto">
-                            <li><span class="text-lilas mr-2">●</span>Palestras com grandes especialistas do mercado para apresentarem suas Visões de Futuro;</li>
-                            <li><span class="text-lilas mr-2">●</span>Ouvir as Partes Interessadas;</li>
-                        </ul>
-                    </div>
-                    <div class="hidden md:flex items-center justify-center">
-                        <div class="etapa-separator w-16 h-2 bg-lilas rounded-full relative"></div>
-                    </div>
-                    <div class="etapa-card flex-1">
-                        <span class="icon">🛠️</span>
-                        <h3 class="etapa-title">Etapa 2: Construção do Direcionamento</h3>
-                        <ul class="list-none space-y-1 text-base text-left w-full max-w-xs mx-auto">
-                            <li><span class="text-lilas mr-2">●</span>6 oficinas com participação de Gerentes, coordenadores, gestores de projetos e convidados;</li>
-                            <li><span class="text-lilas mr-2">●</span>Metodologia e entregáveis previamente definidos: Priorização dos Temas, O futuro que queremos, FOFA, Entrega de Valor, Objetivos Estratégicos e Indicadores Estratégicos;</li>
-                            <li><span class="text-lilas mr-2">●</span>Construção dos Orientadores Estratégicos, Manifesto de Futuro;</li>
-                        </ul>
-                    </div>
-                    <div class="hidden md:flex items-center justify-center">
-                        <div class="etapa-separator w-16 h-2 bg-lilas rounded-full relative"></div>
-                    </div>
-                    <div class="etapa-card flex-1">
-                        <span class="icon">🗺️</span>
-                        <h3 class="etapa-title">Etapa 3: Mapa Estratégico e Tradução</h3>
-                        <ul class="list-none space-y-1 text-base text-left w-full max-w-xs mx-auto">
-                            <li><span class="text-lilas mr-2">●</span>Construção do Mapa Estratégico;</li>
-                            <li><span class="text-lilas mr-2">●</span>Desdobramento do Mapa Estratégico;</li>
-                            <li><span class="text-lilas mr-2">●</span>Grupos de Trabalho;</li>
-                            <li><span class="text-lilas mr-2">●</span>Revisão dos Termos de Referência a cada 2 anos;</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="intro-manifesto" class="text-center mb-12 mt-8">
-            <h2 class="text-4xl font-campuni font-bold text-texto-cabecalho mb-4">Juntos Somos a Evolução</h2>
-            <p class="text-lg text-texto-padrao max-w-3xl mx-auto">
-                O Direcionamento Estratégico 2030 guia nossas ações no Sebrae-PR e nos conecta ao propósito maior: transformar pequenos negócios e impulsionar o futuro do Brasil.
-            </p>
-        </section>
-
-        <section class="relative bg-white text-texto-padrao rounded-xl shadow-2xl p-8 mb-12 overflow-hidden">
-            <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'100%25\' height=\'100%25\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg%3E%3Cpath d=\'M 0 0 L 100 0 L 100 1 L 0 1 Z M 0 3 L 100 3 L 100 4 L 0 4 Z M 0 6 L 100 6 L 100 7 L 0 7 Z M 0 9 L 100 9 L 100 10 L 0 10 Z\' fill=\'%23000000\' opacity=\'0.02\'/%3E%3C/g%3E%3C/svg%3E'); background-size: 100% 20px; background-repeat: repeat-y;"></div>
-            <div class="relative z-10">
-                <h2 class="text-4xl font-campuni font-bold text-azul-escuro mb-6 text-center">MANIFESTO DE FUTURO SEBRAE 2030</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                    <div>
-                        <p class="mb-4 text-base font-figtree leading-relaxed">
-                            Seremos uma organização unida, integrada e em <strong class="text-azul-escuro">constante movimento</strong>. Teremos a agilidade e a capacidade de nos moldar às necessidades, interesses e sonhos de uma nova sociedade, na qual seremos protagonistas por nossa capacidade de antecipar tendências de mercado e dores de nossos clientes. Uma <strong class="text-azul-escuro">referência de conhecimento</strong> para os pequenos negócios, aplicando a tecnologia e a inteligência para o seu sucesso.
-                        </p>
-                        <p class="mb-4 text-base font-figtree leading-relaxed">
-                            Entregamos o melhor de nossas pessoas para todos os empreendedores, buscando sempre levar a <strong class="text-azul-escuro">melhor experiência</strong>.
-                            Entendemos que precisamos tratar de forma desigual os desiguais para oferecer soluções que gerem sustentabilidade, produtividade, competitividade e inovação aos pequenos negócios em todos os cantos do Paraná.
-                            Soluções que <strong class="text-azul-escuro">superam expectativas</strong>, encantam, impactam e transformam.
-                        </p>
-                        <p class="mb-4 text-base font-figtree leading-relaxed">
-                            Trabalharemos para a integração do ecossistema empreendedor de forma a <strong class="text-azul-escuro">conectar ideias e oportunidades</strong>, em um processo de cocriação constante que provocará mudanças e inspirará um futuro de sucesso para o nosso estado.
-                        </p>
-                    </div>
-                    <div>
-                        <p class="mb-4 text-base font-figtree leading-relaxed">
-                            Seremos um <strong class="text-azul-escuro">agente comprometido com o desenvolvimento da sociedade brasileira e paranaense</strong>, atuando na promoção da sustentabilidade do planeta, na melhora da qualidade de vida das pessoas e dos negócios, na geração de empregos e na construção de uma economia mais justa.
-                        </p>
-                        <p class="mb-4 text-base font-figtree leading-relaxed">
-                            Criaremos uma atmosfera leve, simples, atrativa e realizadora para atrair os melhores profissionais e reter os <strong class="text-azul-escuro">melhores talentos</strong>. Um ambiente aberto à diversidade, inclusivo à pluralidade de pensamentos e iniciativa. Um lugar ético, transparente e inovador.
-                            Uma <strong class="text-azul-escuro">inspiração para o pequeno empreendedor</strong> sobre como agir e como fazer negócios.
-                        </p>
-                        <p class="text-base font-figtree leading-relaxed">
-                            Seremos a <strong class="text-azul-escuro">marca mais amada</strong> e desejada pelos pequenos negócios, pois possibilitaremos a eles encontrarem a sua melhor versão.
-                        </p>
-                        <p class="mt-8 text-4xl font-campuni font-bold text-azul-escuro text-center max-w-sm mx-auto leading-tight">
-                            Este é o <br>Sebrae/PR 2030.<br>Somos a evolução.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="orientadores" class="mt-12">
-            <h2 class="text-4xl font-campuni font-bold text-texto-cabecalho mb-8 text-center">Nossos Orientadores Estratégicos</h2>
-            <p class="text-lg text-texto-padrao max-w-3xl mx-auto text-center mb-12">
-                Conheça os oito pilares que direcionam nossas ações para o futuro.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-azul-claro mb-4">
-                        <span class="mr-2">🚶‍♀️</span>Jornada do Cliente
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Construímos relacionamentos únicos com os clientes através de uma jornada integrada em todos os canais. Uma experiência assertiva, simples e resolutiva baseada em dados, na necessidade e linguagem deles.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Dispor aos clientes diversos canais de atendimento integrados, proporcionando uma jornada conveniente, efetiva e de acordo com a sua escolha.</li>
-                        <li>Identificar, conhecer e diferenciar os clientes para promover um atendimento/relacionamento mais interativo e resolutivo, amparando suas dores de forma rápida e customizada.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                        <li><span class="text-azul-claro mr-2">✓</span>Cobertura do Atendimento</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>CSAT – Grau de Satisfação</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>CES – Nível de Esforço</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>Retenção dos Clientes</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>NPS</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>Índice de Recorrência</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>Índice de Experiência (Gartner)</li>
-                    </ul>
-                </div>
-
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-laranja mb-4">
-                        <span class="mr-2">💡</span>Soluções
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Entregamos soluções alinhadas às estratégias de atuação do Sebrae/PR que atendam às necessidades dos clientes e se adaptem às mudanças do mercado e da sociedade.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Disponibilizar soluções resolutivas, centradas nas necessidades dos clientes, de forma ágil.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                        <li><span class="text-laranja mr-2">✓</span>Aplicabilidade das Soluções</li>
-                        <li><span class="text-laranja mr-2">✓</span>Efetividade das Soluções</li>
-                        <li><span class="text-laranja mr-2">✓</span>CES – Nível de Esforço do Cliente</li>
-                        <li><span class="text-laranja mr-2">✓</span>CSAT – Grau de Satisfação dos Clientes</li>
-                    </ul>
-                </div>
-
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-lilas mb-4">
-                        <span class="mr-2">📊</span>Inteligência e Dados
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Aplicamos dados de forma inteligente para antecipar movimentos de mercado, direcionar ações, desenvolver produtos, incorporar novas tecnologias e gerar maior agilidade e segurança na nossa atuação.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Dispor de uma estratégia de dados conectada ao ecossistema empreendedor que permita compreender o cliente e seu ambiente, identificando dores e tendências, predizendo soluções e sendo referência de conhecimento.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                         <li><span class="text-lilas mr-2">✓</span>Maturidade Organizacional em Análise de Dados (IT Score for Data & Analytics)</li>
-                    </ul>
-                </div>
-
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-azul-escuro mb-4">
-                        <span class="mr-2">🌐</span>Ambiente de Negócios
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Ser integrador, articulador e promotor da melhoria do ambiente dos pequenos negócios, atuando como uma entidade protagonista do ecossistema empreendedor.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Desenvolver ecossistemas empreendedores que propiciem a geração de novos negócios, empregos e renda.</li>
-                        <li>Desenvolver líderes que promovam os valores empreendedores em seus diversos ambientes de atuação.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                        <li><span class="text-azul-escuro mr-2">✓</span>IDAN – Municipal</li>
-                        <li><span class="text-azul-escuro mr-2">✓</span>IDAN – Territorial</li>
-                        <li><span class="text-azul-escuro mr-2">✓</span>Indicador de Ecossistemas de Inovação</li>
-                        <li><span class="text-azul-escuro mr-2">✓</span>Líderes Capacitados</li>
-                    </ul>
-                </div>
-
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-azul-claro mb-4">
-                        <span class="mr-2">🤝</span>Sociedade
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Contribuímos para o desenvolvimento sustentável da sociedade por meio de uma atuação ética e transparente, viabilizando sonhos, promovendo o emprego, a geração de renda e a criação de oportunidades para a comunidade paranaense.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Desenvolver iniciativas em sintonia com os ODSs e práticas ESG.</li>
-                        <li>Fomentar os valores empreendedores na sociedade por meio de disseminação da cultura empreendedora.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                        <li><span class="text-azul-claro mr-2">✓</span>Taxa de iniciativas ESG e ODS</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>Taxa de cobertura de alunos</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>Taxa de cobertura de professores</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>Taxa de cobertura de escolas</li>
-                        <li><span class="text-azul-claro mr-2">✓</span>Taxa de programas de cultura empreendedora (fora da rede de ensino)</li>
-                    </ul>
-                </div>
-
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-laranja mb-4">
-                        <span class="mr-2">💻</span>Tecnologia
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Disponibilidade de soluções tecnológicas atualizadas, robustas e seguras que nos permitam ser uma organização mais ágil, acessível e conectada.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Disponibilizar sistemas modelados para a melhor experiência do Sebrae com o cliente.</li>
-                        <li>Dispor de infraestrutura tecnológica alinhada às melhores práticas do mercado.</li>
-                        <li>Melhorar o índice de aplicação de tecnologia.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                        <li><span class="text-laranja mr-2">✓</span>Índice de Satisfação (acesso via Tecnologia)</li>
-                        <li><span class="text-laranja mr-2">✓</span>Índice de Satisfação com Soluções Tecnológicas</li>
-                        <li><span class="text-laranja mr-2">✓</span>Índice de Qualidade da Infraestrutura</li>
-                        <li><span class="text-laranja mr-2">✓</span>IT Score for Security & Risk Management (Gartner)</li>
-                        <li><span class="text-laranja mr-2">✓</span>Ranking de Execução Digital (Gartner adaptado)</li>
-                    </ul>
-                </div>
-
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-lilas mb-4">
-                        <span class="mr-2">⚙️</span>Processos Internos
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Processos simplificados, personalizados, intuitivos e orgânicos para uma melhor experiência para as partes interessadas. Uma organização mais ágil e comprometida com as necessidades dos clientes.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Buscar permanentemente a excelência em gestão.</li>
-                        <li>Ter processos ágeis e centrados no cliente.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                        <li><span class="text-lilas mr-2">✓</span>Índice de melhoria em gestão – FNQ</li>
-                        <li><span class="text-lilas mr-2">✓</span>Evolução Gestão por Processos (MEG)</li>
-                        <li><span class="text-lilas mr-2">✓</span>Modelo de Excelência da Gestão</li>
-                    </ul>
-                </div>
-
-                <div class="card-orientador">
-                    <h3 class="text-2xl font-campuni font-bold text-azul-escuro mb-4">
-                        <span class="mr-2">👥</span>Pessoas
-                    </h3>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Entrega de Valor:</h4>
-                    <p class="mb-4 text-sm">Entregamos uma equipe empreendedora, capacitada e qualificada que busca entender e solucionar as dores dos clientes, se baseando em dados para a melhor tomada de decisão.</p>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Objetivos Estratégicos:</h4>
-                    <ul class="list-disc list-inside mb-4 space-y-1 text-sm">
-                        <li>Promover uma cultura orientada a dados.</li>
-                        <li>Atrair e desenvolver pessoas alinhadas às novas dinâmicas de mercado e reter os melhores talentos.</li>
-                    </ul>
-                    <h4 class="text-lg font-campuni font-semibold text-texto-cabecalho mb-2">Indicadores Chave:</h4>
-                    <ul class="list-none mb-4 space-y-1 text-sm">
-                        <li><span class="text-azul-escuro mr-2">✓</span>Índice de Maturidade da Gartner (Pessoas)</li>
-                        <li><span class="text-azul-escuro mr-2">✓</span>Diagnóstico Alfabetização em Dados (Imaps)</li>
-                        <li><span class="text-azul-escuro mr-2">✓</span>ICO - Índice de Clima Organizacional</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section id="metas-resultados" class="mt-12">
-            <h2 class="text-4xl font-campuni font-bold text-texto-cabecalho mb-8 text-center">Metas e Resultados dos Indicadores</h2>
-            <p class="text-lg text-texto-padrao max-w-3xl mx-auto text-center mb-12">
-                Acompanhe a evolução de nossos indicadores estratégicos ao longo dos anos, comparando metas e resultados alcançados para 2023, 2024, 2025 e projeções para 2030.
-            </p>
-
-            <div id="charts-by-orientador-container">
-                </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-white border-t border-gray-200 mt-12">
-        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
-            <p class="text-sm">&copy; <span id="currentYear"></span> Sebrae/PR. Todos os direitos reservados.</p>
-            <p class="text-xs mt-1">Infográfico gerado para visualização do Direcionamento Estratégico 2030.</p>
+    <aside class="right">
+      <div class="card">
+        <div class="info-head">
+          <div>
+            <div id="nodeName" class="name">Comece clicando em um bloco</div>
+            <div id="crumb" class="crumb">–</div>
+          </div>
+          <div class="chips"><span class="chip">Dica: clique com o botão <span class="kbd">direito</span> para subir um nível</span></div>
         </div>
-    </footer>
+        <div id="desc" class="desc">Você pode carregar seu Excel no padrão A-D (Cliente, Coordenação, Desdobramento, Descrição). A descrição <b>só aparece ao clicar no desdobramento</b>.<br/><br/>Ex.: A=Setorial · B=Agro · C=Qualificação · D=Texto da descrição</div>
+        <div class="hint">• Lâminas mostram: Cliente (A) → Coordenação (B) → Desdobramento (C).<br/>• Descrição (D) aparece <b>somente ao clicar</b> em um desdobramento.</div>
+        <hr style="border-color: rgba(255,255,255,.08); margin:12px 0;">
+        <div class="crumb" style="margin-bottom:6px">Filhos imediatos</div>
+        <div id="children" class="list"></div>
+      </div>
+    </aside>
+  </div>
 
-    <script>
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+  <!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/save-svg-as-png@1.4.17/lib/saveSvgAsPng.min.js"></script>
 
-        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
+  <script>
+  // ================== DADOS DO EXCEL IMPORTADO (embutido) ==================
+  // Se existir, a mandala carregará com estes dados.
+  window.DATA_FROM_UPLOAD = [
+  // Conteúdo gerado a partir do Excel do usuário (A,B,C,D)
+  // (truncado automaticamente se muito grande)
+  
+  {
+    "A": "Setorial",
+    "B": "Agro",
+    "C": "Setorial",
+    "D": "Agro"
+  },
+  {
+    "A": "Setorial",
+    "B": "Startup",
+    "C": "Setorial",
+    "D": "Startup"
+  },
+  {
+    "A": "Setorial",
+    "B": "TIC",
+    "C": "Setorial",
+    "D": "TIC"
+  },
+  {
+    "A": "Setorial",
+    "B": "Turismo",
+    "C": "Setorial",
+    "D": "Turismo"
+  },
+  {
+    "A": "Setorial",
+    "B": "Varejo",
+    "C": "Setorial",
+    "D": "Varejo"
+  },
+  {
+    "A": "Setorial",
+    "B": "Moda",
+    "C": "Setorial",
+    "D": "Moda"
+  },
+  {
+    "A": "Setorial",
+    "B": "Indústria",
+    "C": "Setorial",
+    "D": "Indústria"
+  },
+  {
+    "A": "Setorial",
+    "B": "Serviços",
+    "C": "Setorial",
+    "D": "Serviços"
+  },
+  {
+    "A": "Setorial",
+    "B": "Tecnologias de produção",
+    "C": "Setorial",
+    "D": "Tecnologias de produção"
+  },
+  {
+    "A": "Setorial",
+    "B": "Alimentos e Bebidas",
+    "C": "Setorial",
+    "D": "Alimentos e Bebidas"
+  },
+  {
+    "A": "Setorial",
+    "B": "Marcas e patentes",
+    "C": "Setorial",
+    "D": "Marcas e patentes"
+  },
+  {
+    "A": "Empresarial",
+    "B": "Sala do Empreendedor",
+    "C": "Empresarial",
+    "D": "Sala do Empreendedor"
+  },
+  {
+    "A": "Empresarial",
+    "B": "Coordenação de Atendimento",
+    "C": "Empresarial",
+    "D": "Coordenação de Atendimento"
+  },
+  {
+    "A": "Empresarial",
+    "B": "Parcerias estratégicas",
+    "C": "Empresarial",
+    "D": "Parcerias estratégicas"
+  },
+  {
+    "A": "Empresarial",
+    "B": "Pontos de atendimento",
+    "C": "Empresarial",
+    "D": "Pontos de atendimento"
+  },
+  {
+    "A": "Institucional",
+    "B": "Crédito e Investimentos",
+    "C": "Institucional",
+    "D": "Crédito e Investimentos"
+  },
+  {
+    "A": "Institucional",
+    "B": "Políticas Públicas",
+    "C": "Institucional",
+    "D": "Políticas Públicas"
+  },
+  {
+    "A": "Institucional",
+    "B": "Cultura Empreendedora",
+    "C": "Institucional",
+    "D": "Cultura Empreendedora"
+  },
+  {
+    "A": "Institucional",
+    "B": "Governança",
+    "C": "Institucional",
+    "D": "Governança"
+  },
+  {
+    "A": "Institucional",
+    "B": "Inovação",
+    "C": "Institucional",
+    "D": "Inovação"
+  },
+  {
+    "A": "Empresarial",
+    "B": "Escritório multisetorial",
+    "C": "Empresarial",
+    "D": "Escritório multisetorial"
+  },
+  {
+    "A": "Empresarial",
+    "B": "Parcerias empresariais",
+    "C": "Empresarial",
+    "D": "Parcerias empresariais"
+  },
+  {
+    "A": "Empresarial",
+    "B": "Pontos de Atendimento",
+    "C": "Empresarial",
+    "D": "Pontos de Atendimento"
+  }
+  ];
+  </script>
 
-        function wrapLabel(str, maxWidth) {
-            if (!str) return '';
-            if (str.length <= maxWidth) {
-                return str;
-            }
-            const words = str.split(' ');
-            let currentLine = '';
-            const lines = [];
-            for (const word of words) {
-                if ((currentLine + word).length <= maxWidth) {
-                    currentLine += (currentLine ? ' ' : '') + word;
-                } else {
-                    if (currentLine) lines.push(currentLine);
-                    currentLine = word;
-                }
-            }
-            if (currentLine) lines.push(currentLine);
-            return lines.length > 0 ? lines : [str];
+  <script>
+  /** =============================================================
+   *  MANDALA INTERATIVA – Sunburst clicável + rótulos abreviados
+   *  Excel A-D (Cliente, Coordenação, Desdobramento, Descrição)
+   *  FIXES: guards de root + right-click sobe 1 nível + paleta Sebrae
+   ============================================================= */
+
+  (function bootstrap(){
+    if(typeof window.d3 === 'undefined'){
+      console.error('D3 não carregou.');
+      return;
+    }
+
+    // ---------- Paleta Sebrae/PR ----------
+    const BRAND = {
+      Setorial:   '#0057A4', // azul forte
+      Empresarial:'#00A0DF', // azul claro
+      Institucional:'#002D72' // azul marinho
+    };
+
+    const by = sel => document.querySelector(sel);
+    const size = {w:900,h:900};
+    const radius = Math.min(size.w, size.h)/2 - 8;
+
+    const svg = d3.select('#viz').attr('viewBox', `0 0 ${size.w} ${size.h}`).attr('width','100%').attr('height','100%');
+    const g = svg.append('g').attr('transform',`translate(${size.w/2},${size.h/2})`);
+    const arcsG = g.append('g');
+    const labelsG = g.append('g');
+    const centerG = g.append('g');
+    const tooltip = by('#tooltip');
+
+    const partition = d3.partition().size([2 * Math.PI, radius]);
+    const arc = d3.arc().startAngle(d => d.x0).endAngle(d => d.x1).innerRadius(d => d.y0 + 2).outerRadius(d => Math.max(d.y0 + 2, d.y1 - 4));
+
+    let root = null; let initialized = false; let currentFocus = null;
+
+    function topName(d){ return d.ancestors()[1]?.data.name || d.data.name; }
+    function mix(c){ const col = d3.color(c); col.opacity=1; return col.formatHex(); }
+    function colorFor(d){
+      const top = topName(d);
+      const base = BRAND[top] || '#0077C8';
+      // clarear por nível
+      const level = d.depth;
+      const col = d3.color(base);
+      const factor = 0.15 * (level-1);
+      col.r = Math.min(255, col.r + 255*factor);
+      col.g = Math.min(255, col.g + 255*factor);
+      col.b = Math.min(255, col.b + 255*factor);
+      return mix(col);
+    }
+
+    // Abrevia rótulos quando a lâmina é pequena
+    const STOPWORDS = new Set(['de','do','da','dos','das','e','para','por']);
+    function abbreviate(str, maxLen){
+      str = String(str||'').trim();
+      if(str.length <= maxLen) return str;
+      const words = str.split(/\s+/).filter(w=>!STOPWORDS.has(w.toLowerCase()));
+      let out = [];
+      for(const w of words){
+        if(w.length > 6) out.push(w.slice(0,5) + '.');
+        else out.push(w);
+        if(out.join(' ').length >= maxLen) break;
+      }
+      let res = out.join(' ').trim();
+      if(res.length > maxLen) res = res.slice(0, maxLen-1) + '…';
+      return res || str.slice(0, maxLen-1)+'…';
+    }
+
+    function ensureRoot(){
+      if(root && initialized) return true;
+      try{ render(rowsToHierarchy(mapABCD(window.DATA_FROM_UPLOAD || []))); return true; }
+      catch(err){ console.error('Falha ao garantir root:', err); return false; }
+    }
+    function resetZoomHandler(){ if(!ensureRoot()) return; selectNode(root,false); }
+    function contextMenuHandler(){ if(!ensureRoot()) return; const up = (currentFocus?.parent) || root; selectNode(up, true); }
+
+    function mapABCD(rows){
+      const out = [];
+      for(const r of (rows||[])){
+        const A = r.A ?? r.Cliente ?? r['Coluna A'];
+        const B = r.B ?? r['Coordenação'] ?? r['Coordenacao'] ?? r['Coluna B'];
+        const C = r.C ?? r['Desdobramento'] ?? r['Coluna C'];
+        const D = r.D ?? r['Descrição'] ?? r['Descricao'] ?? r['Coluna D'];
+        if(!(A && B && C)) continue;
+        out.push({ path: `${A}/${B}/${C}`, value: 1, description: D || '' });
+      }
+      return out.length? out : rows; // aceita também {path,value,description}
+    }
+
+    function rowsToHierarchy(rows){
+      const root = {name:'Mandala', children:[]};
+      for(const r of (rows||[])){
+        const path = String(r.path||'').trim(); if(!path) continue;
+        const value = +r.value || 1; const description = r.description || '';
+        const parts = path.split('/').map(s=>s.trim()).filter(Boolean);
+        let cursor = root;
+        for(let i=0;i<parts.length;i++){
+          const name = parts[i];
+          let node = (cursor.children||[]).find(c=>c.name===name);
+          if(!node){ node = {name, children:[]}; (cursor.children||(cursor.children=[])).push(node); }
+          if(i === parts.length-1){ node.value = (node.value||0) + value; if(description) node.description = description; }
+          cursor = node;
         }
+      }
+      return root;
+    }
 
-        const tooltipTitleCallback = function(tooltipItems) {
-            const item = tooltipItems[0];
-            let label = item.chart.data.labels[item.dataIndex];
-            if (Array.isArray(label)) {
-                return label.join(' ');
-            }
-            return label;
-        };
+    function render(data){
+      root = d3.hierarchy(data).sum(d=>d.value||0).sort((a,b)=>b.value-a.value);
+      partition(root);
 
-        const commonChartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        font: {
-                            family: 'Figtree'
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        title: tooltipTitleCallback
-                    },
-                    bodyFont: {
-                        family: 'Figtree'
-                    },
-                    titleFont: {
-                        family: 'Figtree'
-                    }
-                },
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: '#333', // Cor padrão, será sobrescrita por dataset
-                    font: {
-                        family: 'Figtree',
-                        size: 16, // Aumentado para 16
-                        weight: 'bold'
-                    },
-                    formatter: function(value, context) {
-                        return value !== null ? value.toLocaleString('pt-BR') : '';
-                    },
-                    display: true, // Garante que os rótulos sejam exibidos
-                    clip: false, // Não cortar rótulos que saem da área do gráfico
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fundo para o rótulo com mais opacidade
-                    borderColor: 'rgba(0, 0, 0, 0.2)', // Borda sutil mais visível
-                    borderRadius: 4, // Cantos arredondados
-                    padding: 6 // Aumentado o padding
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        font: { family: 'Figtree' },
-                        maxTicksLimit: 5
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)',
-                        borderColor: 'rgba(0, 0, 0, 0.1)'
-                    }
-                },
-                x: {
-                    ticks: {
-                        font: { family: 'Figtree' }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)',
-                        borderColor: 'rgba(0, 0, 0, 0.1)'
-                    }
-                }
-            }
-        };
+      const firstLevel = root.children?.map(d=>d.data.name) || [];
+      d3.select('#legend').selectAll('span').remove();
+      d3.select('#legend').selectAll('span').data(firstLevel).enter().append('span').html(d=>`<i style="background:${BRAND[d]||'#0077C8'}"></i>${d}`);
 
-        const orientadorIcons = {
-            "Jornada do Cliente": "🚶‍♀️",
-            "Soluções": "💡",
-            "Inteligência e Dados": "📊",
-            "Ambiente de Negócios": "🌐",
-            "Sociedade": "🤝",
-            "Tecnologia": "💻",
-            "Processos Internos": "⚙️",
-            "Pessoas": "👥"
-        };
+      const nodes = root.descendants().filter(d => d.depth);
+      const sel = arcsG.selectAll('path').data(nodes, d=>d.ancestors().map(a=>a.data.name).join('/'));
 
-        const allIndicatorsData = {
-            "Jornada do Cliente": [
-                { name: "Customer Satisfaction Score – CSAT (Grau de Satisfação do Cliente)", meta: { "2023": 91, "2024": 92, "2025": 92, "2030": 92 }, realizado: { "2023": 99.3, "2024": 98.8 }, type: 'bar', isHorizontal: true },
-                { name: "Pesquisa CES (Customer Effort Score) - Nível de Esforço do Cliente", meta: { "2023": 5, "2024": 3, "2025": 3, "2030": 1.8 }, realizado: { "2023": 1.7, "2024": 2.07 }, type: 'bar', isHorizontal: true },
-                { name: "Relacionamento com clientes (retenção de clientes)", meta: { "2023": 80, "2024": 82, "2025": 84, "2030": 90 }, realizado: { "2023": 58, "2024": 64.24 }, type: 'line' },
-                { name: "Net Promoter Score (NPS)", meta: { "2023": 75, "2024": 80, "2025": 80, "2030": 80 }, realizado: { "2023": 83.1, "2024": 84 }, type: 'line' },
-                { name: "Nível de interação com clientes - Recorrência", meta: { "2023": 2.4, "2024": 3, "2025": 3.5, "2030": 5 }, realizado: { "2023": 2.97, "2024": 4.89 }, type: 'line' },
-                { name: "Índice de Experiência do Cliente (Gartner)", meta: { "2023": 3.29, "2024": 3.29, "2025": 3.3, "2030": 3.5 }, realizado: { "2023": 3.39, "2024": 3.39 }, type: 'line' }
-            ],
-            "Soluções": [
-                { name: "Aplicabilidade", meta: { "2023": 8.2, "2024": 8.2, "2025": 8.5, "2030": 9 }, realizado: { "2023": 8.2, "2024": 8.3 }, type: 'bar', isHorizontal: true },
-                { name: "Efetividade", meta: { "2023": 8.3, "2024": 8.3, "2025": 8.5, "2030": 9 }, realizado: { "2023": 8.4, "2024": 8.4 }, type: 'bar', isHorizontal: true },
-                { name: "Pesquisa CES (Customer Effort Score) - Nível de Esforço do Cliente (Soluções)", meta: { "2023": 5, "2024": 3, "2025": 3, "2030": 1.8 }, realizado: { "2023": 1.7, "2024": 2.07 }, type: 'bar', isHorizontal: true },
-                { name: "Customer Satisfaction Score – CSAT (Grau de Satisfação do Cliente) (Soluções)", meta: { "2023": 91, "2024": 92, "2025": 92, "2030": 92 }, realizado: { "2023": 99.3, "2024": 98.8 }, type: 'bar', isHorizontal: true }
-            ],
-            "Inteligência e Dados": [
-                { name: "IT Score for Data & Analytics (Gartner)", meta: { "2023": 2.31, "2024": 2.51, "2025": 2.84, "2030": 3.51 }, realizado: { "2023": 2.33, "2024": 3.22 }, type: 'line' },
-                { name: "Diagnóstico Alfabetização em Dados Gap Analysis (Imaps Data e Analytics)", meta: { "2023": null, "2024": 80, "2025": 80, "2030": 80 }, realizado: { "2023": null, "2024": 63 }, type: 'line' }
-            ],
-            "Ambiente de Negócios": [
-                { name: "Índice de Desenvolvimento do Ambiente de Negócios – Municipal (IDAN – M) MPP", meta: { "2023": 65, "2024": 70, "2025": 75, "2030": 80 }, realizado: { "2023": 76, "2024": 80.97 }, type: 'bar' },
-                { name: "Índice de Desenvolvimento do Ambiente de Negócios – Municipal (IDAN – M) MMP", meta: { "2023": 65, "2024": 70, "2025": 80, "2030": 85 }, realizado: { "2023": 76, "2024": 80.97 }, type: 'bar' },
-                { name: "Índice de Desenvolvimento do Ambiente de Negócios – Municipal (IDAN – M) MGP", meta: { "2023": 65, "2024": 70, "2025": 83, "2030": 88 }, realizado: { "2023": 76, "2024": 80.97 }, type: 'bar' },
-                { name: "Índice de Desenvolvimento do Ambiente de Negócios – Territorial (IDAN – T)", meta: { "2023": 40, "2024": 58, "2025": 60, "2030": 80 }, realizado: { "2023": 63, "2024": 80.97 }, type: 'line' },
-                { name: "Indicador de Ecossistemas de Inovação - Inicial", meta: { "2023": null, "2024": 20, "2025": null, "2030": 50 }, realizado: { "2023": null, "2024": 16 }, type: 'line' },
-                { name: "Indicador de Ecossistemas de Inovação - Estruturação", meta: { "2023": null, "2024": 10, "2025": null, "2030": 30 }, realizado: { "2023": null, "2024": 13 }, type: 'line' },
-                { name: "Indicador de Ecossistemas de Inovação - Desenvolvimento", meta: { "2023": null, "2024": 5, "2025": null, "2030": 20 }, realizado: { "2023": null, "2024": 8 }, type: 'line' },
-                { name: "Indicador de Ecossistemas de Inovação - Consolidado", meta: { "2023": null, "2024": null, "2025": null, "2030": 5 }, realizado: { "2023": null, "2024": null }, type: 'text' },
-                { name: "Nível de líderes engajados na causa da pequena empresa", meta: { "2023": 50, "2024": 50, "2025": 60, "2030": 80 }, realizado: { "2023": null, "2024": null }, type: 'line' },
-                { name: "Percentual (%) do Market Share MEI", meta: { "2023": 32, "2024": 38, "2025": 39, "2030": 43 }, realizado: { "2023": 39.9, "2024": 45 }, type: 'line' },
-                { name: "Percentual (%) do Market Share ME + EPP", meta: { "2023": 32, "2024": 39, "2025": 40, "2030": 44 }, realizado: { "2023": 39.2, "2024": 39.6 }, type: 'line' },
-                { name: "Percentual (%) do Market Share Geral", meta: { "2023": 30, "2024": 39, "2025": 39.5, "2030": 44 }, realizado: { "2023": 39.5, "2024": 42.55 }, type: 'line' }
-            ],
-            "Sociedade": [
-                { name: "Taxa de iniciativas (projetos e processos) que contribuem com a estratégia ESG e com os ODS", meta: { "2023": 10, "2024": 25, "2025": 30, "2030": 50 }, realizado: { "2023": null, "2024": 37.83 }, type: 'line' },
-                { name: "Taxa de cobertura de alunos da rede de ensino", meta: { "2023": 12, "2024": 13, "2025": 14, "2030": 20 }, realizado: { "2023": 25.3, "2024": 52.86 }, type: 'line' },
-                { name: "Taxa de cobertura de professores da rede de ensino", meta: { "2023": 11, "2024": 13, "2025": 14, "2030": 20 }, realizado: { "2023": 8.6, "2024": 14.78 }, type: 'line' },
-                { name: "Taxa de cobertura de escolas da rede de ensino", meta: { "2023": 13, "2024": 14, "2025": 15, "2030": 20 }, realizado: { "2023": 19.8, "2024": 28.6 }, type: 'line' },
-                { name: "Percentual de programas de cultura empreendedora adequados e aplicados em ambientes fora da rede de ensino", meta: { "2023": null, "2024": null, "2025": 10, "2030": 50 }, realizado: { "2023": null, "2024": null }, type: 'line' }
-            ],
-            "Tecnologia": [
-                { name: "Índice de Satisfação dos clientes no acesso ao SEBRAE por meio da Tecnologia - Avaliação do Cliente", meta: { "2023": 70, "2024": 72, "2025": 80, "2030": 80 }, realizado: { "2023": 85, "2024": 79 }, type: 'line' },
-                { name: "Índice de Satisfação dos clientes no acesso ao SEBRAE por meio da Tecnologia - Reclamações da Ouvidoria", meta: { "2023": 0.02, "2024": 0.2, "2025": 0.2, "2030": 0.2 }, realizado: { "2023": 0.2, "2024": 0.0001 }, type: 'line' },
-                { name: "Índice de Satisfação com Soluções Tecnológicas", meta: { "2023": 80, "2024": 80, "2025": 80, "2030": 80 }, realizado: { "2023": 89, "2024": 91 }, type: 'line' },
-                { name: "Índice de Qualidade da Infraestrutura", meta: { "2023": 87.5, "2024": 87.5, "2025": 87.5, "2030": 87.5 }, realizado: { "2023": 86.5, "2024": 88 }, type: 'line' },
-                { name: "IT Score for Security & Risk Management – Gartner", meta: { "2023": 4, "2024": 4, "2025": 4, "2030": 4 }, realizado: { "2023": null, "2024": 5 }, type: 'line' },
-                { name: "Digital Execution Scorecard (adaptado da Gartner) - Ranking de Execução Digital", meta: { "2023": null, "2024": null, "2025": null, "2030": null }, realizado: { "2023": null, "2024": null }, type: 'text' }
-            ],
-            "Processos Internos": [
-                { name: "ICO - Índice de Clima Organizacional", meta: { "2023": 90, "2024": 90, "2025": 90, "2030": 90 }, realizado: { "2023": 88.9, "2024": 92 }, type: 'line' },
-                { name: "Índice de melhoria em gestão - FNQ", meta: { "2023": 718, "2024": 718, "2025": 718, "2030": 718 }, realizado: { "2023": 764.75, "2024": 764.75 }, type: 'line' },
-                { name: "Evolução do tema Gestão por Processos na avaliação do MEG - Modelo de Excelência da Gestão", meta: { "2023": 64, "2024": 64, "2025": 80, "2030": 80 }, realizado: { "2023": 61, "2024": 61.47 }, type: 'line' }
-            ],
-            "Pessoas": [
-                { name: "Índice de Maturidade da Gartner (Pessoas)", meta: { "2023": 2.3, "2024": 2.4, "2025": 2.5, "2030": 3.5 }, realizado: { "2023": 2, "2024": 2.83 }, type: 'line' },
-                { name: "Diagnóstico Alfabetização em Dados Gap Analysis (Imaps Data e Analytics)", meta: { "2023": null, "2024": 80, "2025": 80, "2030": 80 }, realizado: { "2023": null, "2024": 63 }, type: 'line' }
-            ]
-        };
+      const enter = sel.enter().append('path')
+        .attr('fill', d => colorFor(d))
+        .attr('stroke', '#0005').attr('stroke-width', .5).attr('d', arc)
+        .on('mouseenter', (ev,d)=>{ tooltip.style.opacity = 1; tooltip.textContent = d.data.name; })
+        .on('mousemove', (ev)=>{ tooltip.style.left = (ev.clientX) + 'px'; tooltip.style.top = (ev.clientY) + 'px'; })
+        .on('mouseleave', ()=> tooltip.style.opacity = 0)
+        .on('click', (ev,d)=> selectNode(d,true))
+        .on('contextmenu', (ev)=>{ ev.preventDefault(); contextMenuHandler(); });
 
-        const years = ["2023", "2024", "2025", "2030"];
-        const chartsByOrientadorContainer = document.getElementById('charts-by-orientador-container');
+      sel.merge(enter).transition().duration(600).attrTween('d', function(d){
+        const i = d3.interpolate(this._current || d, d); this._current = i(1); return t => arc(i(t));
+      });
 
-        Chart.register(ChartDataLabels);
+      sel.exit().remove();
 
-        // Função para criar e injetar gráficos em um contêiner específico
-        function createChartsForOrientador(containerElement, indicatorsArray) {
-            indicatorsArray.forEach((indicator, index) => {
-                const cardDiv = document.createElement('div');
-                cardDiv.className = 'card-orientador';
+      // centro
+      centerG.selectAll('*').remove();
+      centerG.append('circle').attr('r', radius*0.22).attr('fill', 'url(#centerGrad)').style('cursor','pointer').on('click', resetZoomHandler);
+      centerG.append('text').attr('text-anchor','middle').attr('dy','.35em').style('font-weight',700).style('font-size','16px').text('Mandala');
 
-                const title = document.createElement('h4');
-                title.className = 'text-lg font-campuni font-bold text-texto-cabecalho mb-2';
-                title.textContent = wrapLabel(indicator.name, 30);
-                cardDiv.appendChild(title);
+      const defs = svg.select('defs').empty()? svg.append('defs'): svg.select('defs');
+      let grad = defs.select('#centerGrad');
+      if(grad.empty()){
+        grad = defs.append('radialGradient').attr('id','centerGrad');
+        grad.append('stop').attr('offset','0%').attr('stop-color','#ffffff10');
+        grad.append('stop').attr('offset','100%').attr('stop-color','#ffffff05');
+      }
 
-                const hasPlotData = years.some(year => indicator.meta[year] !== null || indicator.realizado[year] !== null);
+      selectNode(root, false);
+      updateLabels();
+      initialized = true;
+    }
 
-                if (hasPlotData && (indicator.type === 'line' || indicator.type === 'bar')) {
-                    const chartContainer = document.createElement('div');
-                    chartContainer.className = 'chart-container-small';
-                    const canvas = document.createElement('canvas');
-                    canvas.id = `chart-${indicator.name.replace(/\s+/g, '-')}-${index}`;
-                    chartContainer.appendChild(canvas);
-                    cardDiv.appendChild(chartContainer);
+    function selectNode(d, zoom){
+      if(!d) return;
+      currentFocus = d;
+      const names = d.ancestors().reverse().map(x=>x.data.name);
+      by('#nodeName').textContent = d.data.name || 'Mandala';
+      by('#crumb').textContent = names.join(' › ');
 
-                    const metaData = years.map(year => indicator.meta[year] !== undefined ? indicator.meta[year] : null);
-                    const realizadoData = years.map(year => indicator.realizado[year] !== undefined ? indicator.realizado[year] : null);
+      const isLeaf = !d.children || d.children.length === 0;
+      if(isLeaf && d.depth >= 3){ by('#desc').innerHTML = (d.data.description || 'Sem descrição cadastrada para este desdobramento.'); }
+      else { by('#desc').innerHTML = 'Selecione um desdobramento para ver a descrição.'; }
 
-                    const ctx = canvas.getContext('2d');
-                    if (!ctx) {
-                        console.error(`Não foi possível obter o contexto 2D para o canvas: ${canvas.id}`);
-                        const errorText = document.createElement('p');
-                        errorText.className = 'text-sm text-red-500 italic text-center mt-4';
-                        errorText.textContent = 'Erro ao carregar o gráfico.';
-                        cardDiv.appendChild(errorText);
-                        return;
-                    }
+      const kids = (d.children || []).map(c=>({name:c.data.name, node:c}));
+      const list = d3.select('#children').selectAll('button').data(kids, k=>k.name);
+      list.enter().append('button').attr('class','chip').text(k=>k.name).on('click',(ev,k)=> selectNode(k.node,true));
+      list.text(k=>k.name); list.exit().remove();
 
-                    const metaGradient = ctx.createLinearGradient(0, 0, 0, 200);
-                    metaGradient.addColorStop(0, 'rgba(42, 79, 219, 0.4)');
-                    metaGradient.addColorStop(1, 'rgba(42, 79, 219, 0)');
+      if(zoom){ zoomTo(d); }
+    }
 
-                    const realizadoGradient = ctx.createLinearGradient(0, 0, 0, 200);
-                    realizadoGradient.addColorStop(0, 'rgba(229, 119, 100, 0.4)');
-                    realizadoGradient.addColorStop(1, 'rgba(229, 119, 100, 0)');
+    function updateLabels(){
+      const nodes = (root ? root.descendants().filter(d=> d.depth>0) : []);
+      const labelSel = labelsG.selectAll('text').data(nodes, d=>d.ancestors().map(a=>a.data.name).join('/'));
 
-                    let chartConfig = {
-                        type: indicator.type,
-                        data: {
-                            labels: years,
-                            datasets: [
-                                {
-                                    label: 'Meta',
-                                    data: metaData,
-                                    borderColor: '#2A4FDB',
-                                    backgroundColor: indicator.type === 'line' ? metaGradient : '#2A4FDB',
-                                    tension: indicator.type === 'line' ? 0.4 : 0,
-                                    fill: indicator.type === 'line' ? true : false,
-                                    pointBackgroundColor: '#2A4FDB',
-                                    pointBorderColor: '#fff',
-                                    pointHoverBackgroundColor: '#2A4FDB',
-                                    pointHoverBorderColor: '#fff',
-                                    pointStyle: 'circle',
-                                    pointRadius: 5,
-                                    pointHoverRadius: 7,
-                                    borderWidth: 3,
-                                    datalabels: {
-                                        color: '#2A4FDB', // Cor específica para Meta
-                                        offset: -25, // Ajustado para mais afastamento
-                                        font: {
-                                            size: 16,
-                                            weight: 'bold'
-                                        },
-                                        display: true,
-                                        clip: false,
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                        borderRadius: 4,
-                                        padding: 6
-                                    }
-                                },
-                                {
-                                    label: 'Realizado',
-                                    data: realizadoData,
-                                    borderColor: '#E57764',
-                                    backgroundColor: indicator.type === 'line' ? realizadoGradient : '#E57764',
-                                    tension: indicator.type === 'line' ? 0.4 : 0,
-                                    fill: indicator.type === 'line' ? true : false,
-                                    pointBackgroundColor: '#E57764',
-                                    pointBorderColor: '#fff',
-                                    pointHoverBackgroundColor: '#E57764',
-                                    pointHoverBorderColor: '#fff',
-                                    pointStyle: 'rectRot',
-                                    pointRadius: 5,
-                                    pointHoverRadius: 7,
-                                    borderWidth: 3,
-                                    datalabels: {
-                                        color: '#E57764', // Cor específica para Realizado
-                                        offset: 25, // Ajustado para mais afastamento
-                                        font: {
-                                            size: 16,
-                                            weight: 'bold'
-                                        },
-                                        display: true,
-                                        clip: false,
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                        borderRadius: 4,
-                                        padding: 6
-                                    }
-                                }
-                            ]
-                        },
-                        options: commonChartOptions
-                    };
+      const enter = labelSel.enter().append('text')
+        .attr('text-anchor','middle')
+        .style('pointer-events','none')
+        .style('font-weight','600')
+        .style('font-size','12px')
+        .style('fill','#e6e9f2')
+        .style('opacity',0.95)
+        .text(d=>d.data.name);
 
-                    // Specific options for horizontalBar (now type 'bar' with indexAxis: 'y')
-                    if (indicator.isHorizontal) { // Use isHorizontal flag to identify horizontal bars
-                        chartConfig.options = {
-                            ...commonChartOptions,
-                            indexAxis: 'y', // Makes it a horizontal bar chart
-                            scales: {
-                                x: {
-                                    beginAtZero: true,
-                                    ticks: { font: { family: 'Figtree' }, maxTicksLimit: 5 },
-                                    grid: { color: 'rgba(0, 0, 0, 0.05)', borderColor: 'rgba(0, 0, 0, 0.1)' }
-                                },
-                                y: {
-                                    ticks: { font: { family: 'Figtree' } },
-                                    grid: { color: 'rgba(0, 0, 0, 0.05)', borderColor: 'rgba(0, 0, 0, 0.1)' }
-                                }
-                            }
-                        };
-                        // Adjust datalabels for horizontal bars
-                        chartConfig.data.datasets[0].datalabels.align = 'end'; // Align to the end of the bar
-                        chartConfig.data.datasets[0].datalabels.anchor = 'end';
-                        chartConfig.data.datasets[0].datalabels.offset = 20; // Aumentado o offset para horizontal
-                        chartConfig.data.datasets[1].datalabels.align = 'end';
-                        chartConfig.data.datasets[1].datalabels.anchor = 'end';
-                        chartConfig.data.datasets[1].datalabels.offset = 20; // Aumentado o offset para horizontal
-                    }
+      labelSel.merge(enter)
+        .text(d=>{
+          const angleSpan = d.x1 - d.x0; // radianos
+          // threshold ~0.12 rad ~ 7 graus
+          return angleSpan < 0.12 ? abbreviate(d.data.name, 16) : d.data.name;
+        })
+        .attr('transform', d=>{
+          const angle = (d.x0 + d.x1)/2 - Math.PI/2;
+          const r = (d.y0 + d.y1)/2;
+          const x = Math.cos(angle) * r;
+          const y = Math.sin(angle) * r;
+          return `translate(${x},${y}) rotate(${(angle*180/Math.PI)})`;
+        })
+        .style('display', d => (d.x1 - d.x0) > 0.04 ? 'block' : 'none');
 
-                    new Chart(canvas, chartConfig);
+      labelSel.exit().remove();
+    }
 
-                } else if (indicator.type === 'text') {
-                    const infoText = document.createElement('p');
-                    infoText.className = 'text-base text-gray-700 italic text-center mt-4';
-                    infoText.textContent = `Status: ${indicator.name}.`;
-                    if (indicator.meta && indicator.meta["2030"] !== null) {
-                        infoText.textContent += ` Meta 2030: ${indicator.meta["2030"]}.`;
-                    }
-                    if (indicator.realizado && indicator.realizado["2024"] !== null) {
-                        infoText.textContent += ` Realizado 2024: ${indicator.realizado["2024"]}.`;
-                    }
-                    cardDiv.appendChild(infoText);
-                } else {
-                    const noDataText = document.createElement('p');
-                    noDataText.className = 'text-sm text-gray-500 italic text-center mt-4';
-                    noDataText.textContent = 'Dados de meta e/ou realizado a serem definidos.';
-                    cardDiv.appendChild(noDataText);
-                }
-                containerElement.appendChild(cardDiv); // Anexa o card ao contêiner do orientador
-            });
+    function zoomTo(focus){
+      if(!focus) return;
+      const x = d3.scaleLinear().range([0, 2 * Math.PI]).domain([focus.x0, focus.x1]);
+      const y = d3.scaleLinear().range([0, radius]).domain([focus.y0, 1]);
+
+      arcsG.selectAll('path')
+        .transition().duration(700)
+        .tween('data', function(d){
+          d.x0s = d.x0s ?? d.x0; d.x1s = d.x1s ?? d.x1; d.y0s = d.y0s ?? d.y0; d.y1s = d.y1s ?? d.y1;
+          const ix  = d3.interpolate(d.x0s, d.x0);
+          const ix1 = d3.interpolate(d.x1s, d.x1);
+          const iy0 = d3.interpolate(d.y0s, d.y0);
+          const iy1 = d3.interpolate(d.y1s, d.y1);
+          return t => { d.x0s = ix(t); d.x1s = ix1(t); d.y0s = iy0(t); d.y1s = iy1(t); };
+        })
+        .attrTween('d', function(d){
+          return () => arc({
+            x0: Math.max(0, Math.min(2 * Math.PI, x(d.x0s ?? d.x0))),
+            x1: Math.max(0, Math.min(2 * Math.PI, x(d.x1s ?? d.x1))),
+            y0: Math.max(0, y(d.y0s ?? d.y0)),
+            y1: Math.max(0, y(d.y1s ?? d.y1))
+          });
+        })
+        .on('end', updateLabels);
+    }
+
+    // ---------- Importação manual (input) ----------
+    document.getElementById('fileInput').addEventListener('change', async (ev)=>{
+      const file = ev.target.files[0]; if(!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      try{
+        if(ext === 'json'){
+          const text = await file.text();
+          render(rowsToHierarchy(mapABCD(JSON.parse(text))));
+        } else if(ext === 'csv'){
+          Papa.parse(file, {header:true, complete:(res)=>{ render(rowsToHierarchy(mapABCD(res.data))); }});
+        } else if(ext === 'xlsx' || ext === 'xls'){
+          const data = await file.arrayBuffer();
+          const wb = XLSX.read(data, {type:'array'});
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, {raw:true, defval:''});
+          render(rowsToHierarchy(mapABCD(rows)));
+        } else {
+          alert('Formato não suportado. Use JSON, CSV ou Excel.');
         }
+      }catch(err){ alert('Falha ao ler o arquivo.'); console.error(err); }
+    });
 
-        // Injeta todos os gráficos ao carregar a página
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOM Content Loaded - Initializing Charts");
-            const chartsByOrientadorContainer = document.getElementById('charts-by-orientador-container');
-            chartsByOrientadorContainer.innerHTML = ''; // Limpa o contêiner principal antes de preencher
+    // Ações topo
+    document.getElementById('downloadJSON').addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(window.DATA_FROM_UPLOAD||[], null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='mandala-exemplo.json'; a.click(); setTimeout(()=> URL.revokeObjectURL(url), 1000);
+    });
+    document.getElementById('exportPNG').addEventListener('click', ()=>{ const node = document.querySelector('#viz'); saveSvgAsPng(node, 'mandala.png', {scale:2, backgroundColor:'#0b1020'}); });
+    document.getElementById('resetZoom').addEventListener('click', resetZoomHandler);
 
-            for (const orientadorName in allIndicatorsData) {
-                if (allIndicatorsData.hasOwnProperty(orientadorName)) {
-                    const orientadorIndicators = allIndicatorsData[orientadorName];
+    // ------------------- Testes automatizados --------------------
+    function runTests(){
+      const results = [];
+      try{ render(rowsToHierarchy(mapABCD(window.DATA_FROM_UPLOAD || []))); results.push('Render A–D embutido: OK'); } catch(e){ results.push('Render A–D embutido: FALHOU – '+e.message); }
 
-                    const orientadorSectionDiv = document.createElement('div');
-                    orientadorSectionDiv.className = 'mb-12';
+      try{
+        // teste right-click: sobe um nível
+        const deep = (root.children?.[0]?.children?.[0]) || root;
+        selectNode(deep,true);
+        const before = document.getElementById('crumb').textContent;
+        contextMenuHandler();
+        const after = document.getElementById('crumb').textContent;
+        results.push(before !== after ? 'Right-click sobe um nível: OK' : 'Right-click: VERIFIQUE');
+      } catch(e){ results.push('Right-click: FALHOU – '+e.message); }
 
-                    const orientadorTitle = document.createElement('h3');
-                    orientadorTitle.className = 'text-3xl font-campuni font-bold text-azul-escuro mb-6 text-center';
-                    orientadorTitle.innerHTML = `${orientadorIcons[orientadorName] || ''} ${orientadorName}`;
-                    orientadorSectionDiv.appendChild(orientadorTitle);
+      try{
+        // abrevia quando pequeno
+        const sample = 'Políticas Públicas';
+        const ab = (function(){
+          const STOP=new Set(['de','do','da','dos','das','e','para','por']);
+          function abbr(s,m){ s=String(s||''); if(s.length<=m) return s; const ws=s.split(/\s+/).filter(w=>!STOP.has(w.toLowerCase())); let out=[]; for(const w of ws){ if(w.length>6) out.push(w.slice(0,5)+'.'); else out.push(w); if(out.join(' ').length>=m) break;} let r=out.join(' ').trim(); if(r.length>m) r=r.slice(0,m-1)+'…'; return r || s.slice(0,m-1)+'…'; }
+          return abbr(sample, 10);
+        })();
+        results.push(/\.|…/.test(ab) ? 'Abreviação: OK' : 'Abreviação: VERIFIQUE');
+      } catch(e){ results.push('Abreviação: FALHOU – '+e.message); }
 
-                    const chartsGridDiv = document.createElement('div');
-                    chartsGridDiv.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8';
+      try{ resetZoomHandler(); results.push('Reset para raiz: OK'); } catch(e){ results.push('Reset raiz: FALHOU – '+e.message); }
 
-                    // Chama a função para criar e injetar os gráficos no grid específico deste orientador
-                    createChartsForOrientador(chartsGridDiv, orientadorIndicators);
+      console.log('[TESTES]', results.join(' | ')); alert(results.join('\n'));
+    }
+    document.getElementById('runTests').addEventListener('click', runTests);
 
-                    orientadorSectionDiv.appendChild(chartsGridDiv);
-                    chartsByOrientadorContainer.appendChild(orientadorSectionDiv);
-                }
-            }
-        });
-    </script>
+    // Render inicial
+    try{ render(rowsToHierarchy(mapABCD(window.DATA_FROM_UPLOAD || []))); }
+    catch(err){ console.error('Falha no render inicial:', err); }
+  })();
+  </script>
 </body>
 </html>
