@@ -1,536 +1,257 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mandala Interativa – Protótipo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mandala Interativa – Sem dependências</title>
   <style>
     :root{
-      --bg:#0b1020; /* fundo escuro elegante */
-      --panel:#0f1630;
-      --panel-2:#0c1228;
-      --text:#e6e9f2;
-      --muted:#a9b1c7;
-      --accent:#0077c8; /* Sebrae blue */
-      --chip:#101834;
+      --bg:#0b1020; --panel:#0f1630; --panel2:#0c1228; --text:#e6e9f2; --muted:#a9b1c7;
+      --emp:#00A0DF; --inst:#002D72; --set:#0057A4; /* cores por cliente */
     }
-    html,body{height:100%;}
-    body{ margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; color:var(--text); background:radial-gradient(1200px 1200px at 85% -20%, #1e2a55 0%, #0b1020 55%);} 
-    .app{display:grid; grid-template-columns: 1fr 420px; gap:16px; height:100vh; padding:16px; box-sizing:border-box;}
-    header{grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); border:1px solid rgba(255,255,255,.06); border-radius:16px; backdrop-filter: blur(6px);}    
-    header .title{font-weight:700; letter-spacing:.3px}
-    .controls{display:flex; flex-wrap:wrap; gap:8px}
-    button, .file-label{appearance:none; border:none; padding:10px 12px; border-radius:12px; background:var(--chip); color:var(--text); cursor:pointer; font-weight:600; border:1px solid rgba(255,255,255,.06);} 
-    button:hover,.file-label:hover{filter:brightness(1.1);} 
-    .file-label{display:inline-flex; align-items:center; gap:8px}
-    input[type="file"]{display:none}
-    .left{position:relative; background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; display:flex; align-items:center; justify-content:center;}
-    .right{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:14px; overflow:auto}
-    .card{background:var(--panel-2); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:12px}
-    .info-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px}
-    .name{font-size:18px; font-weight:700}
-    .crumb{color:var(--muted); font-size:12px}
-    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
-    .chip{background:var(--chip); border:1px solid rgba(255,255,255,.06); padding:6px 8px; border-radius:999px; font-size:12px}
-    .list{display:grid; gap:8px; margin-top:10px}
-    .list button{width:100%; text-align:left}
-    .tooltip{position:absolute; pointer-events:none; background:#000c; color:#fff; padding:6px 8px; border-radius:8px; font-size:12px; transform:translate(-50%,-120%); white-space:nowrap; opacity:0; transition:opacity .15s}
-    .legend{position:absolute; left:14px; bottom:14px; display:flex; gap:6px; flex-wrap:wrap; max-width:75%}
-    .legend span{display:inline-flex; align-items:center; gap:6px; background:var(--chip); border:1px solid rgba(255,255,255,.06); padding:6px 8px; border-radius:999px; font-size:12px}
-    .legend i{width:12px; height:12px; border-radius:3px; display:inline-block}
-    .hint{font-size:12px; color:var(--muted); margin-top:8px}
-    .kbd{border:1px solid rgba(255,255,255,.2); padding:2px 6px; border-radius:6px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; background:rgba(255,255,255,.06)}
-    @media (max-width: 980px){ .app{grid-template-columns:1fr; grid-auto-rows:minmax(0,1fr)} .left{height:56vh} }
+    html,body{height:100%}
+    body{margin:0;background:radial-gradient(1200px 1200px at 85% -20%, #1e2a55 0%, #0b1020 55%);color:var(--text);font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif}
+    .app{display:grid;grid-template-columns:1fr 380px;gap:16px;height:100vh;padding:16px;box-sizing:border-box}
+    header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:10px 12px}
+    .left{position:relative;background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:14px;display:flex;align-items:center;justify-content:center}
+    .right{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px;overflow:auto}
+    .name{font-weight:700;font-size:18px}
+    .crumb{color:var(--muted);font-size:12px}
+    .chip{display:inline-block;background:#101834;border:1px solid rgba(255,255,255,.06);border-radius:999px;padding:6px 8px;margin:4px 6px 0 0}
+    button{background:#101834;border:1px solid rgba(255,255,255,.06);color:var(--text);border-radius:10px;padding:8px 10px;cursor:pointer}
+    svg{width:100%;height:100%}
+    @media(max-width:980px){.app{grid-template-columns:1fr}.left{height:56vh}}
+    #splash{position:fixed;inset:0;background:#0b1020;display:flex;align-items:center;justify-content:center;color:#e6e9f2;font-weight:700;z-index:99999}
+    .tooltip{position:absolute;pointer-events:none;background:#000c;color:#fff;padding:6px 8px;border-radius:8px;font-size:12px;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .15s}
   </style>
 </head>
 <body>
-  <script>
-    // Banner imediato: ajuda quando nada aparece
-    (function(){
-      var splash = document.createElement('div');
-      splash.id = 'splash';
-      splash.style.cssText = 'position:fixed;inset:0;background:#0b1020;display:flex;align-items:center;justify-content:center;color:#e6e9f2;font:600 16px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;z-index:99999;';
-      splash.innerHTML = '🔧 Inicializando visualização...';
-      document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(splash); });
-      window.removeSplash = function(msg){ var el = document.getElementById('splash'); if(el){ el.parentNode.removeChild(el); } if(msg){ var box=document.createElement('div'); box.style.cssText='position:fixed;left:16px;right:16px;bottom:16px;background:#1b223e;color:#fff;border:1px solid #3a4370;border-radius:12px;padding:14px;z-index:99998;box-shadow:0 6px 24px #0006;font:14px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;'; box.innerHTML=msg; document.body.appendChild(box);} };
-    })();
-  </script>
+  <div id="splash">🔧 Inicializando visualização...</div>
   <div class="app">
     <header>
-      <div class="title">📍 Mandala Interativa – Protótipo</div>
-      <div class="controls">
-        <label class="file-label">
-          <input id="fileInput" type="file" accept=".json,.csv,.xlsx,.xls" />
-          📂 Carregar dados (JSON/CSV/Excel)
-        </label>
-        <button id="downloadJSON">⬇️ Baixar JSON</button>
-        <button id="exportPNG">🖼️ Exportar PNG</button>
-        <button id="resetZoom">🔎 Resetar Zoom</button>
+      <div>📍 <b>Mandala Interativa</b> – versão sem dependências</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="runTests">▶️ Rodar Testes</button>
+        <button id="reset">🔎 Resetar foco</button>
       </div>
     </header>
-
     <section class="left">
-      <svg id="viz" width="100%" height="100%" viewBox="0 0 900 900"></svg>
-      <div id="tooltip" class="tooltip"></div>
-      <div id="legend" class="legend"></div>
+      <svg id="viz" viewBox="0 0 900 900" aria-label="mandala"></svg>
+      <div id="tip" class="tooltip"></div>
     </section>
-
     <aside class="right">
-      <div class="card">
-        <div class="info-head">
-          <div>
-            <div id="nodeName" class="name">Comece clicando em um bloco</div>
-            <div id="crumb" class="crumb">–</div>
-          </div>
-          <div class="chips"><span class="chip">Dica: clique com o botão <span class="kbd">direito</span> para subir um nível</span></div>
-        </div>
-        <div id="desc" class="desc">Você pode carregar seu Excel no padrão A-D (Cliente, Coordenação, Desdobramento, Descrição). A descrição <b>só aparece ao clicar no desdobramento</b>.<br/><br/>Ex.: A=Setorial · B=Agro · C=Qualificação · D=Texto da descrição</div>
-        <div class="hint">• Lâminas mostram: Cliente (A) → Coordenação (B) → Desdobramento (C).<br/>• Descrição (D) aparece <b>somente ao clicar</b> em um desdobramento.</div>
-        <hr style="border-color: rgba(255,255,255,.08); margin:12px 0;">
-        <div class="crumb" style="margin-bottom:6px">Filhos imediatos</div>
-        <div id="children" class="list"></div>
-      </div>
+      <div class="name" id="nodeName">Selecione um bloco</div>
+      <div class="crumb" id="crumb">–</div>
+      <div id="desc" style="margin-top:8px">A descrição do <b>Desdobramento</b> aparece aqui ao clicar.</div>
+      <hr style="border-color:rgba(255,255,255,.08);margin:12px 0">
+      <div class="crumb">Filhos imediatos</div>
+      <div id="children"></div>
+      <div style="margin-top:8px" class="crumb">Dica: clique <b>com o botão direito</b> para subir um nível.</div>
     </aside>
   </div>
-
-  <!-- libs -->
-  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/save-svg-as-png@1.4.17/lib/saveSvgAsPng.min.js"></script>
-
   <script>
-  // ================== DADOS DO EXCEL IMPORTADO (embutido) ==================
-  // Se existir, a mandala carregará com estes dados.
-  window.DATA_FROM_UPLOAD = [
-  {"A": "Setorial", "B": "Agro", "C": "Sebraetec", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Agro", "C": "Programa Alimentos Paraná (agroindustrias)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Agro", "C": "Programa Universidade Estadual do Paraná (alunos e professores como multiplicadores)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Agro", "C": "Conecta Agro Paraná -  SebraeTec Alimenta Agro", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Startup", "C": "Garage", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Startup", "C": "Capital Empreendedor/Investidor Anjo", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Startup", "C": "Conecta & Startups Procel", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Startup", "C": "Startup/Mulher de Negócios - Validação", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Startup", "C": "Sebrae pelo Paraná  - Mapa dos Adesivos e Eventos", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Startup", "C": "EB2  - Metodologia Validação", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Startup", "C": "Trilha Acelera 6 Meses (4 estágios)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "TIC", "C": "SebraeTec + Educação TIC  (Robótica, Programação, IA)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "TIC", "C": "Mobilização dos empresários Polo's Regionais - Polo Maringá, Polo Londrina, Polo Nor Oeste, Polo Foz do Iguaçu.  -  Mostra Empresarial (oficinas)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "TIC", "C": "Observatório Sebrae/TIC embarcada", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "TIC", "C": "Arena Sebrae - Cases e demonstração de soluções (festival de inovação)  1 por trimestre (roteiro) - Matriz  (palestras abertas empretec e rodadas de negócios)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "TIC", "C": "Missão Técnica  para conhecer novos  modelos de negócio (SASS)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Turismo", "C": "SebraeTec + (Trilha Sebrae Turismo)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Turismo", "C": "Plano Estratégico Municipais do Turismo / Regulador e Planejamento local  das cidades turísticas e Indutoras (Cidade turística / Samara  - Gabinete)", "D": "xxxxxx", "value": 1.0},
-  {"A": "Setorial", "B": "Turismo", "C": "Modelo de Governança  Municipal (Observatório)  Implementação dos Conselhos“, Inst. turísticas locais","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Turismo","C":"Rotas Turísticas -  Estruturação das Rotas ou Trilhas (10 rotas prioritárias e  19 rotas em desenvolvimento)  Rota do Café, Rota do Queijo, Rota do Vinho, Rota Morros do Cristo, Rota dos Lagos (Nordeste)  Rota do Vôo","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Turismo","C":"Sebrae pelo Paraná -  Presença  nos eventos: FESTURIS, FESTUR e outros  (apresentar trilhas e cases)","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"IG","C":"Encantos Rurais - Selo de incremento de TURISMO","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"IG","C":"Catálogo de IGs do Paraná (número de IG's)  Conexões e oportunidades comerciais do mundo dos IGs","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Indústria","C":"SebraeTec","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Indústria","C":"Hub's  da Indústria (descentralizado  pelo PR)  Centro Agrotechs do PR  (Sistema FIEP)","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Indústria","C":"Qualificação da Industrialização (boas práticas fabrikas  e produção)  Kaizen (foco modelo Toyota) 5s  Padrões de Qualidade","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Comércio","C":"SebraeTec","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Comércio","C":"Qualificação em Vendas (operações de varejo e pós venda)","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Comércio","C":"Paraná Gestão -  encerramento  ferramenta de melhorias","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Comércio","C":"Trilha em Marketing - big data e IA","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Serviço","C":"SebraeTec","D":"xxxxxx","value":1.0},
-  {"A":"Setorial","B":"Serviço","C":"Consultorias especializadas por categoria de serviço e formação de preço","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Cultura Empreendedora","C":"Professor Empreendedor","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Cultura Empreendedora","C":"SEJA - Jóvens e Mulheres Empreendedoras","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Cultura Empreendedora","C":"+SENAC + SESC + SENAI + IFPR + UTFPR  (modelo de conexão com ETEs)  02  turmas 02  programas (empreende Aí  + SEBRAE OFICIAL)","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Liderança","C":"Governança dos COLEGIADOS  de Coordenação  e Lideranças (mandala)","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Liderança","C":"Líderes do +PR  (Indicadores/Painéis ) Transparência  e prestação de contas das entregas","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Liderança","C":"Conselho Deliberativo - Sicoob PR -  (reconhecimento anual de melhores parceiros e lideres por cidade)","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Crédito e Investimentos","C":"Crédito Orientado (linhas de crédito e bancos)","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Crédito e Investimentos","C":"Acesso a Serviços Financeiros","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Crédito e Investimentos","C":"Cooperativas de Crédito","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Inovação","C":"PRojetos de Inovação - IGs e Softlanding (internacionalização)","D":"xxxxxx","value":1.0},
-  {"A":"Institucional","B":"Políticas Públicas","C":"Desburocratização","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Parcerias empresariais","C":"SebraeTec (chamamento anual de credenciamento)","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Parcerias empresariais","C":"Cadeias Produtivas (plano comercial e iniciativas conjuntas)","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Parcerias empresariais","C":"Hub's Regionais (rodadas de negócios)  e Centros integrados multisectoriais","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Parcerias empresariais","C":"Acesso a Mercado (rodadas, missões e feiras)","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Porta a Porta","C":"×  399 Cidades atendidas  - cobertura de mercado (atendentes em campo  e pontos de referência)","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Porta a Porta","C":"Diagnóstico +  direcionamento para Programas (Trilhas)","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Porta a Porta","C":"Acesso as Salas, aos Programas setoriais e Universidades","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Sala do Empreendedor","C":"Programa EGP - \"cidades amigas do empreendedor\"","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Sala do Empreendedor","C":"Qualificação de Agentes  + PBs (sistemas,  pitch de atendimento e mapa de direcionamentos)","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Sala do Empreendedor","C":"Qualificação do Atendimento (para todos os tipos de atendimento)  Telegram  como canal  de orientações e resoluções (bots)","D":"xxxxxx","value":1.0},
-  {"A":"Empresarial","B":"Pontos de Atendimento","C":"+ PONTOS de Diálogo com os Empreendedores (ampliar 2x as unidades)","D":"xxxxxx","value":1.0}
-];
-</script>
-
+  // ================== DADOS DO EXCEL (embutidos previamente) ==================
+  // Estes registros foram extraídos da aba "Mandala" do seu arquivo.
+  // Se quiser trocar, você pode substituir este array.
+  window.DATA_FROM_UPLOAD = window.DATA_FROM_UPLOAD || [
+    {"A":"Setorial","B":"Agro","C":"Sebraetec","D":"xxxxxx","value":1},
+    {"A":"Setorial","B":"Agro","C":"Programa Alimentos Paraná (agroindustrias)","D":"xxxxxx","value":1},
+    {"A":"Setorial","B":"Startup","C":"Garage","D":"xxxxxx","value":1},
+    {"A":"Institucional","B":"Políticas Públicas","C":"Desburocratização","D":"xxxxxx","value":1},
+    {"A":"Empresarial","B":"Sala do Empreendedor","C":"Programa EGP - cidades amigas do empreendedor","D":"xxxxxx","value":1}
+  ];
+  </script>
   <script>
-  /** =============================================================
-   *  MANDALA INTERATIVA – Sunburst clicável + rótulos abreviados
-   *  Excel A-D (Cliente, Coordenação, Desdobramento, Descrição)
-   *  FIXES: guards de root + right-click sobe 1 nível + paleta Sebrae
-   ============================================================= */
+  (function(){
+    const splash = document.getElementById('splash');
+    const svg = document.getElementById('viz');
+    const W=900,H=900,CX=W/2,CY=H/2,R=420, PAD=3;
+    let focus = null; // nó focado
 
-  (function bootstrap(){
-    if(typeof window.d3 === 'undefined'){
-      console.error('D3 não carregou. Rodando fallback sem D3.');
-      removeSplash();
-      // Fallback sem D3: mostra árvore textual e instruções
-      var container = document.createElement('div');
-      container.style.cssText = 'position:fixed;inset:16px;background:#0f1630;border:1px solid #2a335c;border-radius:12px;color:#e6e9f2;padding:16px;overflow:auto;font:14px/1.5 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif';
-      container.innerHTML = '<h2 style="margin:0 0 8px">⚠️ Modo simples (D3 bloqueado)</h2>'+
-        '<div style="opacity:.85">Este ambiente parece estar bloqueando bibliotecas externas (CDNs). '+
-        'Mesmo assim, seus dados foram carregados abaixo. Para ver o gráfico interativo, publique em GitHub Pages ou rode um servidor local.<br><br>'+ 
-        '<b>Dica:</b> Settings → Pages → Deploy from a branch → main / root.</div>';
-      // Mostra hierarquia simples a partir de DATA_FROM_UPLOAD
-      function buildMap(rows){
-        var map = {};
-        (rows||[]).forEach(function(r){
-          var A=r.A||'?', B=r.B||'?', C=r.C||'?';
-          map[A] = map[A] || {}; map[A][B] = map[A][B] || []; map[A][B].push(C);
-        });
-        return map;
+    const BRAND = { 'Empresarial':'var(--emp)', 'Institucional':'var(--inst)', 'Setorial':'var(--set)' };
+
+    function removeSplash(msg){ if(splash){ splash.remove(); } if(msg){ console.log(msg); } }
+
+    // ========= Util: árvore, layout de ângulos e desenho =========
+    function buildTree(rows){
+      const root={name:'Mandala', children:[], __acc:0};
+      const byName=(arr,n)=>{let x=arr.find(d=>d.name===n); if(!x){x={name:n,children:[],__acc:0};arr.push(x);} return x;};
+      for(const r of rows){
+        const A=r.A?.trim(); const B=r.B?.trim(); const C=r.C?.trim(); const D=r.D||''; const v=Number(r.value)||1;
+        if(!(A&&B&&C)) continue;
+        const nA=byName(root.children,A); nA.__acc+=v;
+        const nB=byName(nA.children,B); nB.__acc+=v;
+        let nC=byName(nB.children,C); nC.__acc+=v; if(D) nC.description=D;
       }
-      var data = window.DATA_FROM_UPLOAD || [];
-      var tree = buildMap(data);
-      var html = '<div style="margin-top:12px">';
-      Object.keys(tree).forEach(function(cli){
-        html += '<div style="margin:8px 0"><b>'+cli+'</b><ul style="margin:6px 0 0 18px">';
-        Object.keys(tree[cli]).forEach(function(coord){
-          html += '<li>'+coord+'<ul style="margin:6px 0 0 18px">';
-          tree[cli][coord].forEach(function(desd){ html += '<li>'+desd+'</li>'; });
-          html += '</ul></li>';
-        });
-        html += '</ul></div>';
-      });
-      html += '</div>';
-      container.innerHTML += html;
-      document.body.appendChild(container);
-      // Instruções rápidas
-      var help = document.createElement('div');
-      help.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;background:#1b223e;color:#fff;border:1px solid #3a4370;border-radius:12px;padding:14px;z-index:99998;box-shadow:0 6px 24px #0006';
-      help.innerHTML = 'Para executar com o gráfico: <code>python -m http.server 8080</code> ou publique no GitHub Pages.';
-      document.body.appendChild(help);
-      return;
-    }
-
-    // ---------- Paleta Sebrae/PR ----------
-    const BRAND = {
-      'Empresarial': '#00A0DF', // X
-      'Institucional': '#002D72', // Y
-      'Setorial': '#0057A4' // Z
-    };
-
-    const by = sel => document.querySelector(sel);
-    const size = {w:900,h:900};
-    const radius = Math.min(size.w, size.h)/2 - 8;
-
-    const svg = d3.select('#viz').attr('viewBox', `0 0 ${size.w} ${size.h}`).attr('width','100%').attr('height','100%');
-    const g = svg.append('g').attr('transform',`translate(${size.w/2},${size.h/2})`);
-    const arcsG = g.append('g');
-    const labelsG = g.append('g');
-    const centerG = g.append('g');
-    const tooltip = by('#tooltip');
-
-    const partition = d3.partition().size([2 * Math.PI, radius]);
-    const arc = d3.arc().startAngle(d => d.x0).endAngle(d => d.x1).innerRadius(d => d.y0 + 2).outerRadius(d => Math.max(d.y0 + 2, d.y1 - 4));
-
-    let root = null; let initialized = false; let currentFocus = null;
-
-    function topName(d){ return d.ancestors()[1]?.data.name || d.data.name; }
-    function mix(c){ const col = d3.color(c); col.opacity=1; return col.formatHex(); }
-    function colorFor(d){
-      const top = topName(d);
-      const base = BRAND[top] || '#0077C8';
-      // clarear por nível
-      const level = d.depth;
-      const col = d3.color(base);
-      const factor = 0.15 * (level-1);
-      col.r = Math.min(255, col.r + 255*factor);
-      col.g = Math.min(255, col.g + 255*factor);
-      col.b = Math.min(255, col.b + 255*factor);
-      return mix(col);
-    }
-
-    // Abrevia rótulos quando a lâmina é pequena
-    const STOPWORDS = new Set(['de','do','da','dos','das','e','para','por']);
-    function abbreviate(str, maxLen){
-      str = String(str||'').trim();
-      if(str.length <= maxLen) return str;
-      const words = str.split(/\s+/).filter(w=>!STOPWORDS.has(w.toLowerCase()));
-      let out = [];
-      for(const w of words){
-        if(w.length > 6) out.push(w.slice(0,5) + '.');
-        else out.push(w);
-        if(out.join(' ').length >= maxLen) break;
-      }
-      let res = out.join(' ').trim();
-      if(res.length > maxLen) res = res.slice(0, maxLen-1) + '…';
-      return res || str.slice(0, maxLen-1)+'…';
-    }
-
-    function ensureRoot(){
-      if(root && initialized) return true;
-      try{ render(rowsToHierarchy(mapABCD(window.DATA_FROM_UPLOAD || []))); return true; }
-      catch(err){ console.error('Falha ao garantir root:', err); return false; }
-    }
-    function resetZoomHandler(){ if(!ensureRoot()) return; selectNode(root,false); }
-    function contextMenuHandler(){ if(!ensureRoot()) return; const up = (currentFocus?.parent) || root; selectNode(up, true); }
-
-    function mapABCD(rows){
-      const out = [];
-      for(const r of (rows||[])){
-        const A = r.A ?? r.Cliente ?? r['Coluna A'];
-        const B = r.B ?? r['Coordenação'] ?? r['Coordenacao'] ?? r['Coluna B'];
-        let   C = r.C ?? r['Desdobramento'] ?? r['Coluna C'];
-        const D = r.D ?? r['Descrição'] ?? r['Descricao'] ?? r['Coluna D'] ?? '';
-        let   V = r.value ?? r['Valor'] ?? r['%'] ?? r['percent'] ?? r['Percentual'];
-        if(!(A && B)) continue;
-        if(!C) C = B; // fallback: quando não há desdobramento, usar a coordenação
-        V = (typeof V === 'string') ? parseFloat(V.replace(',','.')) : (+V || 1);
-        if(!isFinite(V) || V<=0) V = 1;
-        out.push({ path: `${A}/${B}/${C}`, value: V, description: D });
-      }
-      return out.length? out : rows; // aceita também {path,value,description}
-    }/${B}/${C}`, value: 1, description: D || '' });
-      }
-      return out.length? out : rows; // aceita também {path,value,description}
-    }
-
-    function rowsToHierarchy(rows){
-      const root = {name:'Mandala', children:[]};
-      for(const r of (rows||[])){
-        const path = String(r.path||'').trim(); if(!path) continue;
-        const value = +r.value || 1; const description = r.description || '';
-        const parts = path.split('/').map(s=>s.trim()).filter(Boolean);
-        let cursor = root;
-        for(let i=0;i<parts.length;i++){
-          const name = parts[i];
-          let node = (cursor.children||[]).find(c=>c.name===name);
-          if(!node){ node = {name, children:[]}; (cursor.children||(cursor.children=[])).push(node); }
-          if(i === parts.length-1){ node.value = (node.value||0) + value; if(description) node.description = description; }
-          cursor = node;
-        }
-      }
+      root.__acc = root.children.reduce((s,c)=>s+c.__acc,0)||1;
       return root;
     }
 
-    function render(data){
-      root = d3.hierarchy(data).sum(d=>d.value||0).sort((a,b)=>b.value-a.value);
-      partition(root);
+    function layoutAngles(node, start, end, depth){
+      node.x0=start; node.x1=end; node.depth=depth;
+      const kids=node.children||[]; const total=node.__acc||1;
+      let cur=start;
+      for(const k of kids){
+        const span=(k.__acc||1)/total*(end-start);
+        layoutAngles(k, cur, cur+span, depth+1);
+        cur+=span;
+      }
+    }
 
-      const firstLevel = root.children?.map(d=>d.data.name) || [];
-      d3.select('#legend').selectAll('span').remove();
-      d3.select('#legend').selectAll('span').data(firstLevel).enter().append('span').html(d=>`<i style="background:${BRAND[d]||'#0077C8'}"></i>${d}`);
+    function ringRadii(depth){
+      const maxDepth=3; // Cliente, Coordenação, Desdobramento
+      const ring = R/maxDepth;
+      const y0=ring*(depth-1), y1=ring*depth;
+      return [y0+PAD, y1-PAD];
+    }
 
-      const nodes = root.descendants().filter(d => d.depth);
-      const sel = arcsG.selectAll('path').data(nodes, d=>d.ancestors().map(a=>a.data.name).join('/'));
+    function polar(cx,cy,r,ang){ return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)]; }
 
-      const enter = sel.enter().append('path')
-        .attr('fill', d => colorFor(d))
-        .attr('stroke', '#0005').attr('stroke-width', .5).attr('d', arc)
-        .on('mouseenter', (ev,d)=>{ tooltip.style.opacity = 1; tooltip.textContent = d.data.name; })
-        .on('mousemove', (ev)=>{ tooltip.style.left = (ev.clientX) + 'px'; tooltip.style.top = (ev.clientY) + 'px'; })
-        .on('mouseleave', ()=> tooltip.style.opacity = 0)
-        .on('click', (ev,d)=> selectNode(d,true))
-        .on('contextmenu', (ev)=>{ ev.preventDefault(); contextMenuHandler(); });
+    function arcPath(d){
+      const [ir,or]=ringRadii(d.depth);
+      const a0=d.x0, a1=Math.max(a0+1e-6, d.x1);
+      const p0=polar(CX,CY, or, a0), p1=polar(CX,CY, or, a1);
+      const p2=polar(CX,CY, ir, a1), p3=polar(CX,CY, ir, a0);
+      const large = (a1-a0) > Math.PI ? 1:0;
+      return [
+        'M',p0[0],p0[1],
+        'A',or,or,0,large,1,p1[0],p1[1],
+        'L',p2[0],p2[1],
+        'A',ir,ir,0,large,0,p3[0],p3[1],
+        'Z'
+      ].join(' ');
+    }
 
-      sel.merge(enter).transition().duration(600).attrTween('d', function(d){
-        const i = d3.interpolate(this._current || d, d); this._current = i(1); return t => arc(i(t));
-      });
+    function abbrev(text, max){
+      text=String(text||''); if(text.length<=max) return text;
+      const stop=new Set(['de','do','da','dos','das','e','para','por']);
+      const words=text.split(/\s+/).filter(w=>!stop.has(w.toLowerCase()));
+      const out=[]; for(const w of words){ out.push(w.length>6? (w.slice(0,5)+'.'):w); if(out.join(' ').length>=max) break; }
+      let s=out.join(' '); if(s.length>max) s=s.slice(0,max-1)+'…'; return s||text.slice(0,max-1)+'…';
+    }
 
-      sel.exit().remove();
+    function colorFor(d){
+      const top = d.depth===1? d.name : (d.ancestors? d.ancestors[1]?.name : d.topName);
+      const base = BRAND[top] || '#0077c8';
+      // clareia por profundidade
+      const n = d.depth-1; // 0,1,2
+      function lighten(hex, amt){
+        const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); if(!m) return hex;
+        let r=parseInt(m[1],16), g=parseInt(m[2],16), b=parseInt(m[3],16);
+        r=Math.min(255, r+amt); g=Math.min(255, g+amt); b=Math.min(255, b+amt);
+        return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+      }
+      return lighten(base, Math.round(35*n));
+    }
 
-      // centro
-      centerG.selectAll('*').remove();
-      centerG.append('circle').attr('r', radius*0.22).attr('fill', 'url(#centerGrad)').style('cursor','pointer').on('click', resetZoomHandler);
-      centerG.append('text').attr('text-anchor','middle').attr('dy','.35em').style('font-weight',700).style('font-size','16px').text('Mandala');
+    function computeAncestors(node){
+      function walk(n, parent){ n.parent=parent||null; n.ancestors=function(){ const a=[]; let x=this; while(x){ a.push(x); x=x.parent; } return a; }; (n.children||[]).forEach(c=>walk(c,n)); }
+      walk(node,null);
+    }
 
-      const defs = svg.select('defs').empty()? svg.append('defs'): svg.select('defs');
-      let grad = defs.select('#centerGrad');
-      if(grad.empty()){
-        grad = defs.append('radialGradient').attr('id','centerGrad');
-        grad.append('stop').attr('offset','0%').attr('stop-color','#ffffff10');
-        grad.append('stop').attr('offset','100%').attr('stop-color','#ffffff05');
+    function render(rootData){
+      svg.innerHTML='';
+      // fundo suave
+      const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      bg.setAttribute('cx', CX); bg.setAttribute('cy', CY); bg.setAttribute('r', R*0.23);
+      bg.setAttribute('fill', '#ffffff0f');
+      svg.appendChild(bg);
+
+      // desenha arcos
+      const nodes = rootData.flatten.filter(n=>n.depth>0);
+      for(const d of nodes){
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d', arcPath(d));
+        path.setAttribute('fill', colorFor(d));
+        path.setAttribute('stroke', '#0005');
+        path.setAttribute('stroke-width', '0.5');
+        path.style.cursor='pointer';
+        path.addEventListener('click', ev=> selectNode(d,true));
+        path.addEventListener('contextmenu', ev=>{ ev.preventDefault(); rightClick(); });
+        path.addEventListener('mousemove', ev=> showTip(ev,d.name));
+        path.addEventListener('mouseleave', ev=> hideTip());
+        svg.appendChild(path);
+        // label
+        const mid=(d.x0+d.x1)/2; const [ir,or]=ringRadii(d.depth); const r=(ir+or)/2; const pos=polar(CX,CY,r,mid);
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('x', pos[0]); text.setAttribute('y', pos[1]);
+        text.setAttribute('text-anchor','middle');
+        text.setAttribute('font-size','12');
+        text.setAttribute('fill','#e6e9f2');
+        const ang=(mid*180/Math.PI);
+        text.setAttribute('transform', `rotate(${ang} ${pos[0]} ${pos[1]})`);
+        const span = d.x1-d.x0; text.textContent = span < 0.17 ? abbrev(d.name, 16) : d.name; // abrevia em fatias pequenas
+        svg.appendChild(text);
       }
 
-      selectNode(root, false);
-      updateLabels();
-      initialized = true;
-      // tudo certo, remove o splash de carregamento
-      removeSplash();
+      // centro "botão"
+      const center = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      center.setAttribute('cx', CX); center.setAttribute('cy', CY); center.setAttribute('r', R*0.22);
+      center.setAttribute('fill', '#00000020'); center.style.cursor='pointer';
+      center.addEventListener('click', ()=>{ focus=root; updateRight(root); });
+      center.addEventListener('contextmenu', ev=>{ ev.preventDefault(); rightClick(); });
+      svg.appendChild(center);
     }
 
-    function selectNode(d, zoom){
-      if(!d) return;
-      currentFocus = d;
-      const names = d.ancestors().reverse().map(x=>x.data.name);
-      by('#nodeName').textContent = d.data.name || 'Mandala';
-      by('#crumb').textContent = names.join(' › ');
+    // ============= UI lateral =============
+    const $name=document.getElementById('nodeName');
+    const $crumb=document.getElementById('crumb');
+    const $desc=document.getElementById('desc');
+    const $children=document.getElementById('children');
+    const $tip=document.getElementById('tip');
 
-      const isLeaf = !d.children || d.children.length === 0;
-      if(isLeaf && d.depth >= 3){ by('#desc').innerHTML = (d.data.description || 'Sem descrição cadastrada para este desdobramento.'); }
-      else { by('#desc').innerHTML = 'Selecione um desdobramento para ver a descrição.'; }
+    function showTip(ev, text){ $tip.textContent=text; $tip.style.left=ev.clientX+'px'; $tip.style.top=ev.clientY+'px'; $tip.style.opacity=1; }
+    function hideTip(){ $tip.style.opacity=0; }
 
-      const kids = (d.children || []).map(c=>({name:c.data.name, node:c}));
-      const list = d3.select('#children').selectAll('button').data(kids, k=>k.name);
-      list.enter().append('button').attr('class','chip').text(k=>k.name).on('click',(ev,k)=> selectNode(k.node,true));
-      list.text(k=>k.name); list.exit().remove();
+    function updateRight(d){
+      const names = []; let x=d; while(x){ names.unshift(x.name); x=x.parent; }
+      $name.textContent = d.name;
+      $crumb.textContent = names.join(' › ');
+      // descrição somente em folha (desdobramento)
+      const isLeaf = !d.children || d.children.length===0;
+      $desc.innerHTML = (isLeaf && d.depth>=3) ? (d.description||'Sem descrição cadastrada para este desdobramento.') : 'Selecione um desdobramento para ver a descrição.';
 
-      if(zoom){ zoomTo(d); }
+      // filhos
+      $children.innerHTML='';
+      (d.children||[]).forEach(c=>{
+        const b=document.createElement('button'); b.className='chip'; b.textContent=c.name; b.onclick=()=>selectNode(c,true); $children.appendChild(b);
+      });
     }
 
-    function updateLabels(){
-      const nodes = (root ? root.descendants().filter(d=> d.depth>0) : []);
-      const labelSel = labelsG.selectAll('text').data(nodes, d=>d.ancestors().map(a=>a.data.name).join('/'));
+    function selectNode(d, zoom){ focus=d||focus; updateRight(focus); /* sem animação/zoom por simplicidade e robustez */ }
+    function rightClick(){ if(!focus) return; selectNode(focus.parent||root,true); }
 
-      const enter = labelSel.enter().append('text')
-        .attr('text-anchor','middle')
-        .style('pointer-events','none')
-        .style('font-weight','600')
-        .style('font-size','12px')
-        .style('fill','#e6e9f2')
-        .style('opacity',0.95)
-        .text(d=>d.data.name);
-
-      labelSel.merge(enter)
-        .text(d=>{
-          const angleSpan = d.x1 - d.x0; // radianos
-          // threshold ~0.12 rad ~ 7 graus
-          return angleSpan < 0.12 ? abbreviate(d.data.name, 16) : d.data.name;
-        })
-        .attr('transform', d=>{
-          const angle = (d.x0 + d.x1)/2 - Math.PI/2;
-          const r = (d.y0 + d.y1)/2;
-          const x = Math.cos(angle) * r;
-          const y = Math.sin(angle) * r;
-          return `translate(${x},${y}) rotate(${(angle*180/Math.PI)})`;
-        })
-        .style('display', d => (d.x1 - d.x0) > 0.04 ? 'block' : 'none');
-
-      labelSel.exit().remove();
-    }
-
-    function zoomTo(focus){
-      if(!focus) return;
-      const x = d3.scaleLinear().range([0, 2 * Math.PI]).domain([focus.x0, focus.x1]);
-      const y = d3.scaleLinear().range([0, radius]).domain([focus.y0, 1]);
-
-      arcsG.selectAll('path')
-        .transition().duration(700)
-        .tween('data', function(d){
-          d.x0s = d.x0s ?? d.x0; d.x1s = d.x1s ?? d.x1; d.y0s = d.y0s ?? d.y0; d.y1s = d.y1s ?? d.y1;
-          const ix  = d3.interpolate(d.x0s, d.x0);
-          const ix1 = d3.interpolate(d.x1s, d.x1);
-          const iy0 = d3.interpolate(d.y0s, d.y0);
-          const iy1 = d3.interpolate(d.y1s, d.y1);
-          return t => { d.x0s = ix(t); d.x1s = ix1(t); d.y0s = iy0(t); d.y1s = iy1(t); };
-        })
-        .attrTween('d', function(d){
-          return () => arc({
-            x0: Math.max(0, Math.min(2 * Math.PI, x(d.x0s ?? d.x0))),
-            x1: Math.max(0, Math.min(2 * Math.PI, x(d.x1s ?? d.x1))),
-            y0: Math.max(0, y(d.y0s ?? d.y0)),
-            y1: Math.max(0, y(d.y1s ?? d.y1))
-          });
-        })
-        .on('end', updateLabels);
-    }
-
-    // ---------- Importação manual (input) ----------
-    document.getElementById('fileInput').addEventListener('change', async (ev)=>{
-      const file = ev.target.files[0]; if(!file) return;
-      const ext = file.name.split('.').pop().toLowerCase();
+    // ============= Bootstrap =============
+    let root; // hierarquia pronta
+    function init(){
       try{
-        if(ext === 'json'){
-          const text = await file.text();
-          render(rowsToHierarchy(mapABCD(JSON.parse(text))));
-        } else if(ext === 'csv'){
-          Papa.parse(file, {header:true, complete:(res)=>{ render(rowsToHierarchy(mapABCD(res.data))); }});
-        } else if(ext === 'xlsx' || ext === 'xls'){
-          const data = await file.arrayBuffer();
-          const wb = XLSX.read(data, {type:'array'});
-          const sheet = wb.Sheets[wb.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet, {raw:true, defval:''});
-          render(rowsToHierarchy(mapABCD(rows)));
-        } else {
-          alert('Formato não suportado. Use JSON, CSV ou Excel.');
-        }
-      }catch(err){ alert('Falha ao ler o arquivo.'); console.error(err); }
-    });
-
-    // Ações topo
-    document.getElementById('downloadJSON').addEventListener('click', ()=>{
-      const blob = new Blob([JSON.stringify(window.DATA_FROM_UPLOAD||[], null, 2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='mandala-exemplo.json'; a.click(); setTimeout(()=> URL.revokeObjectURL(url), 1000);
-    });
-    document.getElementById('exportPNG').addEventListener('click', ()=>{ const node = document.querySelector('#viz'); saveSvgAsPng(node, 'mandala.png', {scale:2, backgroundColor:'#0b1020'}); });
-    document.getElementById('resetZoom').addEventListener('click', resetZoomHandler);
-
-    // ------------------- Testes automatizados --------------------
-    function runTests(){
-      const results = [];
-      try{ render(rowsToHierarchy(mapABCD(window.DATA_FROM_UPLOAD || []))); results.push('Render A–D embutido: OK'); } catch(e){ results.push('Render A–D embutido: FALHOU – '+e.message); }
-
-      try{
-        // teste right-click: sobe um nível
-        const deep = (root.children?.[0]?.children?.[0]) || root;
-        selectNode(deep,true);
-        const before = document.getElementById('crumb').textContent;
-        contextMenuHandler();
-        const after = document.getElementById('crumb').textContent;
-        results.push(before !== after ? 'Right-click sobe um nível: OK' : 'Right-click: VERIFIQUE');
-      } catch(e){ results.push('Right-click: FALHOU – '+e.message); }
-
-      try{
-        // abrevia quando pequeno
-        const sample = 'Políticas Públicas';
-        const ab = (function(){
-          const STOP=new Set(['de','do','da','dos','das','e','para','por']);
-          function abbr(s,m){ s=String(s||''); if(s.length<=m) return s; const ws=s.split(/\s+/).filter(w=>!STOP.has(w.toLowerCase())); let out=[]; for(const w of ws){ if(w.length>6) out.push(w.slice(0,5)+'.'); else out.push(w); if(out.join(' ').length>=m) break;} let r=out.join(' ').trim(); if(r.length>m) r=r.slice(0,m-1)+'…'; return r || s.slice(0,m-1)+'…'; }
-          return abbr(sample, 10);
-        })();
-        results.push(/\.|…/.test(ab) ? 'Abreviação: OK' : 'Abreviação: VERIFIQUE');
-      } catch(e){ results.push('Abreviação: FALHOU – '+e.message); }
-
-      try{ resetZoomHandler(); results.push('Reset para raiz: OK'); } catch(e){ results.push('Reset raiz: FALHOU – '+e.message); }
-
-      console.log('[TESTES]', results.join(' | ')); alert(results.join('\n'));
+        const rows = (Array.isArray(window.DATA_FROM_UPLOAD) && window.DATA_FROM_UPLOAD.length) ? window.DATA_FROM_UPLOAD : [];
+        root = buildTree(rows);
+        // preparar flatten e ângulos
+        layoutAngles(root, -Math.PI/2, Math.PI*3/2, 0);
+        computeAncestors(root);
+        const flat=[]; (function walk(n){ flat.push(n); (n.children||[]).forEach(walk); })(root); root.flatten=flat;
+        render(root); focus=root; updateRight(root); removeSplash('ok');
+      }catch(e){
+        removeSplash('Falha ao iniciar');
+        alert('Erro ao inicializar: '+(e&&e.message?e.message:e));
+        console.error(e);
+      }
     }
-    document.getElementById('runTests').addEventListener('click', runTests);
 
-    // Render inicial
-    try{ render(rowsToHierarchy(mapABCD(window.DATA_FROM_UPLOAD || []))); }
-    catch(err){ console.error('Falha no render inicial:', err); }
+    // ============= Testes =============
+    document.getElementById('runTests').onclick=function(){
+      const results=[];
+      try{ if(svg.querySelectorAll('path').length>0) results.push('Render: OK'); else results.push('Render: FALHOU'); }catch(e){ results.push('Render: EXC '+e.message); }
+      try{ const firstLeaf = root.flatten.find(n=>!n.children||n.children.length===0); selectNode(firstLeaf,false); if(document.getElementById('desc').textContent.trim()) results.push('Descrição em folha: OK'); else results.push('Descrição em folha: VERIFIQUE'); }catch(e){ results.push('Descrição: EXC '+e.message); }
+      try{ const before=$crumb.textContent; rightClick(); const after=$crumb.textContent; results.push(before!==after? 'Right-click sobe nível: OK':'Right-click: VERIFIQUE'); }catch(e){ results.push('Right-click: EXC '+e.message); }
+      alert(results.join('\n'));
+    };
+    document.getElementById('reset').onclick=function(){ selectNode(root,true); };
+
+    // start
+    init();
   })();
-    </script>
-  <script>
-    // Watchdog para ambientes onde nada renderiza (ex.: visualização do arquivo no site do GitHub, não no Pages)
-    (function(){
-      function showHelp(msg){
-        var box = document.createElement('div');
-        box.style.cssText = 'position:fixed;inset:auto 16px 16px 16px;background:#1b223e;color:#fff;border:1px solid #3a4370;border-radius:12px;padding:14px;z-index:99999;box-shadow:0 6px 24px #0006;font:14px/1.4 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;';
-        box.innerHTML = '<b>Não apareceu nada?</b><br>'+msg;
-        document.body.appendChild(box);
-      }
-      // Se após 1800ms não houver paths, avisa o usuário
-      setTimeout(function(){
-        try{
-          var svg = document.querySelector('#viz');
-          var paths = svg ? svg.querySelectorAll('path').length : 0;
-          if(paths === 0){
-            showHelp('Se você está vendo este arquivo pela <i>página do repositório</i> no GitHub, o HTML não executa scripts por segurança. <br><br><b>Como publicar:</b><br>1) Vá em <i>Settings → Pages</i>.<br>2) Em <i>Build and deployment</i>, selecione a branch (ex.: <b>main</b>) e a pasta <b>root</b>.<br>3) Salve. Acesse a URL do GitHub Pages, algo como <code>https://&lt;seu-usuário&gt;.github.io/&lt;repo&gt;/</code>.<br><br>Alternativa local: abra com um servidor estático (ex.: <code>npx serve</code>) em vez de <code>file://</code>.');
-          }
-        }catch(e){ /* ignore */ }
-      }, 1800);
-
-      // Overlay de erros de script
-      window.addEventListener('error', function(ev){
-        var detail = (ev && ev.message) ? ev.message : 'Erro de script';
-        removeSplash('<b>Erro detectado:</b> <code>'+detail+'</code><br>Abra o Console (F12) para detalhes.');
-      });
-      });
-    })();
   </script>
 </body>
 </html>
