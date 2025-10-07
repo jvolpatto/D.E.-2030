@@ -1,257 +1,284 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mandala Interativa – Sem dependências</title>
-  <style>
-    :root{
-      --bg:#0b1020; --panel:#0f1630; --panel2:#0c1228; --text:#e6e9f2; --muted:#a9b1c7;
-      --emp:#00A0DF; --inst:#002D72; --set:#0057A4; /* cores por cliente */
-    }
-    html,body{height:100%}
-    body{margin:0;background:radial-gradient(1200px 1200px at 85% -20%, #1e2a55 0%, #0b1020 55%);color:var(--text);font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif}
-    .app{display:grid;grid-template-columns:1fr 380px;gap:16px;height:100vh;padding:16px;box-sizing:border-box}
-    header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:10px 12px}
-    .left{position:relative;background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:14px;display:flex;align-items:center;justify-content:center}
-    .right{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px;overflow:auto}
-    .name{font-weight:700;font-size:18px}
-    .crumb{color:var(--muted);font-size:12px}
-    .chip{display:inline-block;background:#101834;border:1px solid rgba(255,255,255,.06);border-radius:999px;padding:6px 8px;margin:4px 6px 0 0}
-    button{background:#101834;border:1px solid rgba(255,255,255,.06);color:var(--text);border-radius:10px;padding:8px 10px;cursor:pointer}
-    svg{width:100%;height:100%}
-    @media(max-width:980px){.app{grid-template-columns:1fr}.left{height:56vh}}
-    #splash{position:fixed;inset:0;background:#0b1020;display:flex;align-items:center;justify-content:center;color:#e6e9f2;font-weight:700;z-index:99999}
-    .tooltip{position:absolute;pointer-events:none;background:#000c;color:#fff;padding:6px 8px;border-radius:8px;font-size:12px;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .15s}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador Indicador Produtividade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#2a4fda; --atl:#0b2574; --ink:#0f172a; --muted:#64748b;
+    --grid:#e5e7eb; --bg:#f6f8fb; --ok:#047857; --warn:#b45309; --bad:#b91c1c;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Figtree, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size:17px;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.35;
+  }
+  h1{margin:0;font-size:28px;color:var(--atl);letter-spacing:.2px}
+  h2{margin:0 0 6px;font-size:22px;color:#0f172a}
+  .wrap{max-width:980px;margin:22px auto;padding:0 18px}
+  .card{
+    background:#fff;border:1px solid var(--grid);border-radius:16px;
+    box-shadow:0 10px 24px rgba(16,24,40,.06);padding:18px;margin-bottom:16px;position:relative
+  }
+  .titleCenter{display:flex;align-items:center;justify-content:center;position:relative}
+  .helpBtn{
+    position:absolute; right:16px; top:16px;
+    display:inline-flex;align-items:center;gap:8px;
+    background:#eef2ff; border:1px solid #dbeafe; color:#0b2574;
+    border-radius:12px; padding:8px 12px; font-weight:800; cursor:pointer; text-decoration:none
+  }
+  .helpIcon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:#e9edff;color:#1f3fdb;font-weight:800;font-size:13px;border:1px solid #d6ddff}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+  .cols-6{grid-column:span 6} .cols-12{grid-column:span 12}
+  @media(max-width:900px){.cols-6{grid-column:span 12}}
+  label{display:block;font-size:13px;color:#334155;margin:10px 0 6px}
+  input[type=number]{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:12px;font-size:16px;background:#fff}
+  input[readonly]{background:#f8fafc;border-color:#e2e8f0;color:#64748b}
+  .btn{background:var(--azul);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px}
+  .kpi{border:1px solid var(--grid);border-radius:14px;padding:16px;background:#fff}
+  .kpi .title{font-size:13px;color:#334155}
+  .kpi .value{font-size:26px;font-weight:800;color:var(--azul);line-height:1.1}
+  .muted{color:var(--muted);font-size:13px}
+  .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:800;font-size:12px}
+  .ok{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+  .warn{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}
+  .bad{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+  .suf{position:relative}
+  .suf:after{content:'%';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#64748b;font-size:12px}
+  .note{font-size:13px;color:#475569;margin-top:8px}
+
+  /* Meta layout */
+  .metaHead{margin-bottom:10px}
+  .metaRule{color:#50627a;font-size:13px;margin-top:4px}
+  .metaGrid{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
+  @media(max-width:900px){.metaGrid{grid-template-columns:1fr}}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .kpisWide{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .kpi .statusText{font-size:16px;font-weight:800;margin-top:6px}
+
+  /* Overlay/modal help */
+  .overlay{position:fixed;inset:0;background:rgba(2,6,23,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
+  .modal{background:#fff;border-radius:16px;border:1px solid var(--grid);max-width:680px;width:100%;box-shadow:0 18px 44px rgba(2,6,23,.25)}
+  .modal header{padding:14px 16px;border-bottom:1px solid var(--grid);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .modal h3{margin:0;font-size:18px}
+  .modal .close{background:#f1f5ff;border:1px solid #dbeafe;color:#0b2574;border-radius:10px;padding:8px 10px;font-weight:800;cursor:pointer}
+  .modal .body{padding:16px;font-size:15px;color:#0f172a}
+  .modal .body p{margin:0 0 10px}
+  .modal .body code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:2px 6px}
+</style>
 </head>
 <body>
-  <div id="splash">🔧 Inicializando visualização...</div>
-  <div class="app">
-    <header>
-      <div>📍 <b>Mandala Interativa</b> – versão sem dependências</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="runTests">▶️ Rodar Testes</button>
-        <button id="reset">🔎 Resetar foco</button>
-      </div>
-    </header>
-    <section class="left">
-      <svg id="viz" viewBox="0 0 900 900" aria-label="mandala"></svg>
-      <div id="tip" class="tooltip"></div>
-    </section>
-    <aside class="right">
-      <div class="name" id="nodeName">Selecione um bloco</div>
-      <div class="crumb" id="crumb">–</div>
-      <div id="desc" style="margin-top:8px">A descrição do <b>Desdobramento</b> aparece aqui ao clicar.</div>
-      <hr style="border-color:rgba(255,255,255,.08);margin:12px 0">
-      <div class="crumb">Filhos imediatos</div>
-      <div id="children"></div>
-      <div style="margin-top:8px" class="crumb">Dica: clique <b>com o botão direito</b> para subir um nível.</div>
-    </aside>
+<div class="wrap">
+  <div class="card">
+    <div class="titleCenter">
+      <h1>Simulador Indicador Produtividade</h1>
+      <a class="helpBtn" onclick="openHelp('geral')"><span class="helpIcon">?</span> Ajuda</a>
+    </div>
   </div>
-  <script>
-  // ================== DADOS DO EXCEL (embutidos previamente) ==================
-  // Estes registros foram extraídos da aba "Mandala" do seu arquivo.
-  // Se quiser trocar, você pode substituir este array.
-  window.DATA_FROM_UPLOAD = window.DATA_FROM_UPLOAD || [
-    {"A":"Setorial","B":"Agro","C":"Sebraetec","D":"xxxxxx","value":1},
-    {"A":"Setorial","B":"Agro","C":"Programa Alimentos Paraná (agroindustrias)","D":"xxxxxx","value":1},
-    {"A":"Setorial","B":"Startup","C":"Garage","D":"xxxxxx","value":1},
-    {"A":"Institucional","B":"Políticas Públicas","C":"Desburocratização","D":"xxxxxx","value":1},
-    {"A":"Empresarial","B":"Sala do Empreendedor","C":"Programa EGP - cidades amigas do empreendedor","D":"xxxxxx","value":1}
-  ];
-  </script>
-  <script>
-  (function(){
-    const splash = document.getElementById('splash');
-    const svg = document.getElementById('viz');
-    const W=900,H=900,CX=W/2,CY=H/2,R=420, PAD=3;
-    let focus = null; // nó focado
 
-    const BRAND = { 'Empresarial':'var(--emp)', 'Institucional':'var(--inst)', 'Setorial':'var(--set)' };
+  <!-- 1) Simulação do Resultado -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">
+      <h2>1) Simulação do Resultado</h2>
+      <button class="btn" id="reset">Resetar</button>
+    </div>
+    <div class="grid">
+      <div class="cols-6">
+        <label>Resultado 1º ciclo</label>
+        <div class="suf"><input type="number" id="r1" step="0.01" value="17.72" readonly></div>
+        <label>Resultado 2º ciclo</label>
+        <div class="suf"><input type="number" id="r2" step="0.01" value="35.82" readonly></div>
+        <label>Resultado 3º ciclo</label>
+        <div class="suf"><input type="number" id="x" step="0.01" placeholder="ex.: 28,50"></div>
+      </div>
+      <div class="cols-6">
+        <label>Empresas 1º ciclo</label>
+        <input type="number" id="n1" step="1" value="272" readonly>
+        <label>Empresas 2º ciclo</label>
+        <input type="number" id="n2" step="1" value="320" readonly>
+        <label>Empresas 3º ciclo</label>
+        <input type="number" id="n3" step="1" placeholder="ex.: 250">
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="title">Consolidado atual (1º+2º)</div><div id="curr" class="value">0,00%</div></div>
+      <div class="kpi"><div class="title">Consolidado final (com 3º ciclo)</div><div id="final" class="value">0,00%</div></div>
+      <div class="kpi">
+        <div class="title">Totais</div>
+        <div class="value" id="pesos">—</div>
+        <div class="muted" id="pesosDet">N1: — | N2: — | N3: —</div>
+      </div>
+    </div>
+    <div class="note">Fórmula: (Resultado1 × Empresas1 + Resultado2 × Empresas2 + Resultado3 × Empresas3) ÷ (Empresas1 + Empresas2 + Empresas3)</div>
+  </div>
 
-    function removeSplash(msg){ if(splash){ splash.remove(); } if(msg){ console.log(msg); } }
+  <!-- 2) Simulação da Meta -->
+  <div class="card">
+    <div class="metaHead">
+      <h2>2) Simulação da Meta (CSN 95–115%)</h2>
+      <div class="metaRule">Regra: execução entre 95% e 115% da meta. Se a projeção ficar fora, ajuste a meta ou revise o cenário de resultado.</div>
+    </div>
 
-    // ========= Util: árvore, layout de ângulos e desenho =========
-    function buildTree(rows){
-      const root={name:'Mandala', children:[], __acc:0};
-      const byName=(arr,n)=>{let x=arr.find(d=>d.name===n); if(!x){x={name:n,children:[],__acc:0};arr.push(x);} return x;};
-      for(const r of rows){
-        const A=r.A?.trim(); const B=r.B?.trim(); const C=r.C?.trim(); const D=r.D||''; const v=Number(r.value)||1;
-        if(!(A&&B&&C)) continue;
-        const nA=byName(root.children,A); nA.__acc+=v;
-        const nB=byName(nA.children,B); nB.__acc+=v;
-        let nC=byName(nB.children,C); nC.__acc+=v; if(D) nC.description=D;
-      }
-      root.__acc = root.children.reduce((s,c)=>s+c.__acc,0)||1;
-      return root;
-    }
+    <div class="metaGrid">
+      <div class="stack">
+        <div>
+          <label>Meta atual</label>
+          <div class="suf"><input type="number" id="T" step="0.01" value="18.00" readonly></div>
+        </div>
+        <div>
+          <label>Meta simulada</label>
+          <div class="suf"><input type="number" id="Tsim" step="0.01" placeholder="ex.: 22,50"></div>
+        </div>
+      </div>
 
-    function layoutAngles(node, start, end, depth){
-      node.x0=start; node.x1=end; node.depth=depth;
-      const kids=node.children||[]; const total=node.__acc||1;
-      let cur=start;
-      for(const k of kids){
-        const span=(k.__acc||1)/total*(end-start);
-        layoutAngles(k, cur, cur+span, depth+1);
-        cur+=span;
-      }
-    }
+      <div class="kpisWide">
+        <!-- Meta atual -->
+        <div class="kpi">
+          <div class="title">Faixa 95%–115% (meta atual)</div>
+          <div id="faixa" class="value">—</div>
+        </div>
+        <div class="kpi">
+          <div class="title">Execução vs. meta atual</div>
+          <div id="exec" class="value">—</div>
+        </div>
+        <div class="kpi">
+          <div class="title">Status (meta atual)</div>
+          <div class="statusText"><span id="status" class="badge">—</span></div>
+        </div>
 
-    function ringRadii(depth){
-      const maxDepth=3; // Cliente, Coordenação, Desdobramento
-      const ring = R/maxDepth;
-      const y0=ring*(depth-1), y1=ring*depth;
-      return [y0+PAD, y1-PAD];
-    }
+        <!-- Meta simulada -->
+        <div class="kpi" id="simFaixaBox" style="display:none">
+          <div class="title">Faixa 95%–115% (meta simulada)</div>
+          <div id="simFaixa" class="value">—</div>
+        </div>
+        <div class="kpi" id="simExecBox" style="display:none">
+          <div class="title">Execução vs. meta simulada</div>
+          <div id="simExec" class="value">—</div>
+        </div>
+        <div class="kpi" id="simStatusBox" style="display:none">
+          <div class="title">Status (meta simulada)</div>
+          <div class="statusText"><span id="simStatus" class="badge">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    function polar(cx,cy,r,ang){ return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)]; }
+<!-- Modal de ajuda (reutilizável) -->
+<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal">
+    <header>
+      <h3 id="helpTitle">Ajuda</h3>
+      <button class="close" onclick="closeHelp()">Fechar</button>
+    </header>
+    <div class="body" id="helpBody">...</div>
+  </div>
+</div>
 
-    function arcPath(d){
-      const [ir,or]=ringRadii(d.depth);
-      const a0=d.x0, a1=Math.max(a0+1e-6, d.x1);
-      const p0=polar(CX,CY, or, a0), p1=polar(CX,CY, or, a1);
-      const p2=polar(CX,CY, ir, a1), p3=polar(CX,CY, ir, a0);
-      const large = (a1-a0) > Math.PI ? 1:0;
-      return [
-        'M',p0[0],p0[1],
-        'A',or,or,0,large,1,p1[0],p1[1],
-        'L',p2[0],p2[1],
-        'A',ir,ir,0,large,0,p3[0],p3[1],
-        'Z'
-      ].join(' ');
-    }
+<script>
+// Percentuais: entrada em % (18,00) -> decimal (0.18)
+function pctIn(id){
+  const el = document.getElementById(id);
+  if(!el) return 0;
+  const raw = (el.value||'').toString().replace(',','.');
+  const num = parseFloat(raw);
+  return isFinite(num) ? num/100 : 0;
+}
+function pct(x,dec=2){ return (x*100).toFixed(dec).replace('.',',') + '%'; }
+function ratio(x,dec=1){ return (x*100).toFixed(dec).replace('.',',') + '%'; }
 
-    function abbrev(text, max){
-      text=String(text||''); if(text.length<=max) return text;
-      const stop=new Set(['de','do','da','dos','das','e','para','por']);
-      const words=text.split(/\s+/).filter(w=>!stop.has(w.toLowerCase()));
-      const out=[]; for(const w of words){ out.push(w.length>6? (w.slice(0,5)+'.'):w); if(out.join(' ').length>=max) break; }
-      let s=out.join(' '); if(s.length>max) s=s.slice(0,max-1)+'…'; return s||text.slice(0,max-1)+'…';
-    }
+function compute(){
+  const r1=pctIn('r1'), r2=pctIn('r2'), r3=pctIn('x');
+  const n1=parseFloat(document.getElementById('n1').value)||0;
+  const n2=parseFloat(document.getElementById('n2').value)||0;
+  const n3=parseFloat(document.getElementById('n3').value)||0;
+  const curr=(r1*n1 + r2*n2)/((n1+n2)||1);
+  const final=(r1*n1 + r2*n2 + r3*n3)/((n1+n2+n3)||1);
+  const total=(n1+n2+n3)||1;
+  const w1=n1/total, w2=n2/total, w3=n3/total;
+  return {r1,r2,r3,n1,n2,n3,curr,final,w1,w2,w3,total};
+}
 
-    function colorFor(d){
-      const top = d.depth===1? d.name : (d.ancestors? d.ancestors[1]?.name : d.topName);
-      const base = BRAND[top] || '#0077c8';
-      // clareia por profundidade
-      const n = d.depth-1; // 0,1,2
-      function lighten(hex, amt){
-        const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); if(!m) return hex;
-        let r=parseInt(m[1],16), g=parseInt(m[2],16), b=parseInt(m[3],16);
-        r=Math.min(255, r+amt); g=Math.min(255, g+amt); b=Math.min(255, b+amt);
-        return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
-      }
-      return lighten(base, Math.round(35*n));
-    }
+function computeMeta(final, Tdec){
+  const T = Tdec;
+  const low=0.95*T, high=1.15*T;
+  const exec = T>0 ? final/T : 0;
+  let status='ok', badge='Dentro da faixa';
+  if(exec>1.15){ status='bad'; badge='Acima de 115%'; }
+  else if(exec<0.95){ status='warn'; badge='Abaixo de 95%'; }
+  return {T,low,high,exec,status,badge};
+}
 
-    function computeAncestors(node){
-      function walk(n, parent){ n.parent=parent||null; n.ancestors=function(){ const a=[]; let x=this; while(x){ a.push(x); x=x.parent; } return a; }; (n.children||[]).forEach(c=>walk(c,n)); }
-      walk(node,null);
-    }
+function applyStatus(el, status, text){
+  el.className='badge ' + (status==='ok'?'ok':(status==='bad'?'bad':'warn'));
+  el.textContent=text;
+}
 
-    function render(rootData){
-      svg.innerHTML='';
-      // fundo suave
-      const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
-      bg.setAttribute('cx', CX); bg.setAttribute('cy', CY); bg.setAttribute('r', R*0.23);
-      bg.setAttribute('fill', '#ffffff0f');
-      svg.appendChild(bg);
+function updateAll(){
+  const s=compute();
+  document.getElementById('curr').textContent = pct(s.curr,2);
+  document.getElementById('final').textContent = pct(s.final,2);
+  document.getElementById('pesos').textContent = `${s.total} empresas`;
+  document.getElementById('pesosDet').textContent = `N1: ${s.n1} | N2: ${s.n2} | N3: ${s.n3}`;
 
-      // desenha arcos
-      const nodes = rootData.flatten.filter(n=>n.depth>0);
-      for(const d of nodes){
-        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.setAttribute('d', arcPath(d));
-        path.setAttribute('fill', colorFor(d));
-        path.setAttribute('stroke', '#0005');
-        path.setAttribute('stroke-width', '0.5');
-        path.style.cursor='pointer';
-        path.addEventListener('click', ev=> selectNode(d,true));
-        path.addEventListener('contextmenu', ev=>{ ev.preventDefault(); rightClick(); });
-        path.addEventListener('mousemove', ev=> showTip(ev,d.name));
-        path.addEventListener('mouseleave', ev=> hideTip());
-        svg.appendChild(path);
-        // label
-        const mid=(d.x0+d.x1)/2; const [ir,or]=ringRadii(d.depth); const r=(ir+or)/2; const pos=polar(CX,CY,r,mid);
-        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-        text.setAttribute('x', pos[0]); text.setAttribute('y', pos[1]);
-        text.setAttribute('text-anchor','middle');
-        text.setAttribute('font-size','12');
-        text.setAttribute('fill','#e6e9f2');
-        const ang=(mid*180/Math.PI);
-        text.setAttribute('transform', `rotate(${ang} ${pos[0]} ${pos[1]})`);
-        const span = d.x1-d.x0; text.textContent = span < 0.17 ? abbrev(d.name, 16) : d.name; // abrevia em fatias pequenas
-        svg.appendChild(text);
-      }
+  // Meta atual
+  const m = computeMeta(s.final, pctIn('T'));
+  document.getElementById('faixa').textContent = `${pct(m.low,2)} — ${pct(m.high,2)}`;
+  document.getElementById('exec').textContent = ratio(m.exec,1);
+  applyStatus(document.getElementById('status'), m.status,
+              (m.status==='ok')?'Dentro da faixa':(m.status==='bad'?'Acima de 115%':'Abaixo de 95%'));
 
-      // centro "botão"
-      const center = document.createElementNS('http://www.w3.org/2000/svg','circle');
-      center.setAttribute('cx', CX); center.setAttribute('cy', CY); center.setAttribute('r', R*0.22);
-      center.setAttribute('fill', '#00000020'); center.style.cursor='pointer';
-      center.addEventListener('click', ()=>{ focus=root; updateRight(root); });
-      center.addEventListener('contextmenu', ev=>{ ev.preventDefault(); rightClick(); });
-      svg.appendChild(center);
-    }
+  // Meta simulada (opcional)
+  const TsimEl = document.getElementById('Tsim');
+  const Tsim = pctIn('Tsim');
+  const showSim = (TsimEl.value && !isNaN(Tsim) && Tsim>0);
+  document.getElementById('simFaixaBox').style.display = showSim ? 'block' : 'none';
+  document.getElementById('simExecBox').style.display = showSim ? 'block' : 'none';
+  document.getElementById('simStatusBox').style.display = showSim ? 'block' : 'none';
+  if(showSim){
+    const ms = computeMeta(s.final, Tsim);
+    document.getElementById('simFaixa').textContent = `${pct(ms.low,2)} — ${pct(ms.high,2)}`;
+    document.getElementById('simExec').textContent = ratio(ms.exec,1);
+    applyStatus(document.getElementById('simStatus'), ms.status,
+                (ms.status==='ok')?'Dentro da faixa':(ms.status==='bad'?'Acima de 115%':'Abaixo de 95%'));
+  }
+}
 
-    // ============= UI lateral =============
-    const $name=document.getElementById('nodeName');
-    const $crumb=document.getElementById('crumb');
-    const $desc=document.getElementById('desc');
-    const $children=document.getElementById('children');
-    const $tip=document.getElementById('tip');
+// Help modal
+const helpTexts = {
+  geral: `<p><b>Como usar o simulador</b></p>
+          <p>1) Informe o <b>Resultado 3º ciclo</b> (em %) e a <b>Empresas 3º ciclo</b> (em número). Os ciclos 1 e 2 ficam bloqueados.</p>
+          <p>2) Veja o <b>Consolidado final</b> calculado automaticamente.</p>
+          <p>3) Na seção de <b>Meta</b>, você pode testar uma <b>Meta simulada</b> para verificar a faixa 95–115% e o status.</p>
+          <p>A fórmula é uma <b>média ponderada</b>: (Resultado1 × Empresas1 + Resultado2 × Empresas2 + Resultado3 × Empresas3) ÷ (Empresas1 + Empresas2 + Empresas3).</p>`
+};
 
-    function showTip(ev, text){ $tip.textContent=text; $tip.style.left=ev.clientX+'px'; $tip.style.top=ev.clientY+'px'; $tip.style.opacity=1; }
-    function hideTip(){ $tip.style.opacity=0; }
+function openHelp(key){
+  const ov = document.getElementById('overlay');
+  const body = document.getElementById('helpBody');
+  const title = document.getElementById('helpTitle');
+  body.innerHTML = helpTexts[key] || '...';
+  title.textContent = 'Ajuda do Simulador';
+  ov.style.display='flex';
+}
+function closeHelp(){ document.getElementById('overlay').style.display='none'; }
+document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeHelp(); });
 
-    function updateRight(d){
-      const names = []; let x=d; while(x){ names.unshift(x.name); x=x.parent; }
-      $name.textContent = d.name;
-      $crumb.textContent = names.join(' › ');
-      // descrição somente em folha (desdobramento)
-      const isLeaf = !d.children || d.children.length===0;
-      $desc.innerHTML = (isLeaf && d.depth>=3) ? (d.description||'Sem descrição cadastrada para este desdobramento.') : 'Selecione um desdobramento para ver a descrição.';
-
-      // filhos
-      $children.innerHTML='';
-      (d.children||[]).forEach(c=>{
-        const b=document.createElement('button'); b.className='chip'; b.textContent=c.name; b.onclick=()=>selectNode(c,true); $children.appendChild(b);
-      });
-    }
-
-    function selectNode(d, zoom){ focus=d||focus; updateRight(focus); /* sem animação/zoom por simplicidade e robustez */ }
-    function rightClick(){ if(!focus) return; selectNode(focus.parent||root,true); }
-
-    // ============= Bootstrap =============
-    let root; // hierarquia pronta
-    function init(){
-      try{
-        const rows = (Array.isArray(window.DATA_FROM_UPLOAD) && window.DATA_FROM_UPLOAD.length) ? window.DATA_FROM_UPLOAD : [];
-        root = buildTree(rows);
-        // preparar flatten e ângulos
-        layoutAngles(root, -Math.PI/2, Math.PI*3/2, 0);
-        computeAncestors(root);
-        const flat=[]; (function walk(n){ flat.push(n); (n.children||[]).forEach(walk); })(root); root.flatten=flat;
-        render(root); focus=root; updateRight(root); removeSplash('ok');
-      }catch(e){
-        removeSplash('Falha ao iniciar');
-        alert('Erro ao inicializar: '+(e&&e.message?e.message:e));
-        console.error(e);
-      }
-    }
-
-    // ============= Testes =============
-    document.getElementById('runTests').onclick=function(){
-      const results=[];
-      try{ if(svg.querySelectorAll('path').length>0) results.push('Render: OK'); else results.push('Render: FALHOU'); }catch(e){ results.push('Render: EXC '+e.message); }
-      try{ const firstLeaf = root.flatten.find(n=>!n.children||n.children.length===0); selectNode(firstLeaf,false); if(document.getElementById('desc').textContent.trim()) results.push('Descrição em folha: OK'); else results.push('Descrição em folha: VERIFIQUE'); }catch(e){ results.push('Descrição: EXC '+e.message); }
-      try{ const before=$crumb.textContent; rightClick(); const after=$crumb.textContent; results.push(before!==after? 'Right-click sobe nível: OK':'Right-click: VERIFIQUE'); }catch(e){ results.push('Right-click: EXC '+e.message); }
-      alert(results.join('\n'));
-    };
-    document.getElementById('reset').onclick=function(){ selectNode(root,true); };
-
-    // start
-    init();
-  })();
-  </script>
+['x','n3','Tsim'].forEach(id=>document.getElementById(id).addEventListener('input', updateAll));
+document.getElementById('reset').addEventListener('click', ()=>{
+  document.getElementById('x').value=30.00; document.getElementById('n3').value=250; document.getElementById('Tsim').value=''; updateAll();
+});
+updateAll();
+</script>
 </body>
 </html>
