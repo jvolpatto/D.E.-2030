@@ -3,282 +3,496 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Simulador Indicador Produtividade</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>MVP - Simulador Indicadores de Metas Mobilizadoras</title>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --azul:#2a4fda; --atl:#0b2574; --ink:#0f172a; --muted:#64748b;
-    --grid:#e5e7eb; --bg:#f6f8fb; --ok:#047857; --warn:#b45309; --bad:#b91c1c;
-  }
+  :root{--azul:#2a4fda;--atl:#0b2574;--ink:#0f172a;--muted:#64748b;--grid:#e5e7eb;--bg:#f6f8fb;--ok:#047857;--warn:#b45309;--bad:#b91c1c}
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0;
-    font-family:Figtree, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size:17px;
-    background:var(--bg);
-    color:var(--ink);
-    line-height:1.35;
-  }
-  h1{margin:0;font-size:28px;color:var(--atl);letter-spacing:.2px}
+  body{margin:0;font-family:'Figtree', system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica, sans-serif;font-size:17px;background:var(--bg);color:var(--ink);line-height:1.45}
+  h1{margin:0;font-size:30px;color:#0b2574;letter-spacing:.2px;text-align:center}
   h2{margin:0 0 6px;font-size:22px;color:#0f172a}
-  .wrap{max-width:980px;margin:22px auto;padding:0 18px}
-  .card{
-    background:#fff;border:1px solid var(--grid);border-radius:16px;
-    box-shadow:0 10px 24px rgba(16,24,40,.06);padding:18px;margin-bottom:16px;position:relative
-  }
-  .titleCenter{display:flex;align-items:center;justify-content:center;position:relative}
-  .helpBtn{
-    position:absolute; right:16px; top:16px;
-    display:inline-flex;align-items:center;gap:8px;
-    background:#eef2ff; border:1px solid #dbeafe; color:#0b2574;
-    border-radius:12px; padding:8px 12px; font-weight:800; cursor:pointer; text-decoration:none
-  }
-  .helpIcon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:#e9edff;color:#1f3fdb;font-weight:800;font-size:13px;border:1px solid #d6ddff}
-  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-  .cols-6{grid-column:span 6} .cols-12{grid-column:span 12}
-  @media(max-width:900px){.cols-6{grid-column:span 12}}
+  .wrap{max-width:1100px;margin:22px auto;padding:0 18px}
+  .card{background:#fff;border:1px solid var(--grid);border-radius:16px;box-shadow:0 10px 24px rgba(16,24,40,.06);padding:20px;margin-bottom:18px;position:relative}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{background:var(--azul);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;font-size:16px}
+  .btn.sec{background:#eef2ff;color:#0b2574;border:1px solid #dbeafe}
+  select,input[type=number],input[type=text]{padding:10px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;font-size:16px;font-family:'Figtree',sans-serif}
   label{display:block;font-size:13px;color:#334155;margin:10px 0 6px}
-  input[type=number]{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:12px;font-size:16px;background:#fff}
+  .suf{position:relative}
+  .suf:after{content:'%';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#64748b;font-size:12px}
   input[readonly]{background:#f8fafc;border-color:#e2e8f0;color:#64748b}
-  .btn{background:var(--azul);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer}
   .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px}
   .kpi{border:1px solid var(--grid);border-radius:14px;padding:16px;background:#fff}
   .kpi .title{font-size:13px;color:#334155}
   .kpi .value{font-size:26px;font-weight:800;color:var(--azul);line-height:1.1}
-  .muted{color:var(--muted);font-size:13px}
-  .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:800;font-size:12px}
+  .muted{color:#64748b;font-size:13px}
+  .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
   .ok{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
   .warn{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}
   .bad{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
-  .suf{position:relative}
-  .suf:after{content:'%';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#64748b;font-size:12px}
   .note{font-size:13px;color:#475569;margin-top:8px}
-
-  /* Meta layout */
-  .metaHead{margin-bottom:10px}
-  .metaRule{color:#50627a;font-size:13px;margin-top:4px}
-  .metaGrid{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
-  @media(max-width:900px){.metaGrid{grid-template-columns:1fr}}
-  .stack{display:flex;flex-direction:column;gap:12px}
-  .kpisWide{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .kpi .statusText{font-size:16px;font-weight:800;margin-top:6px}
-
-  /* Overlay/modal help */
-  .overlay{position:fixed;inset:0;background:rgba(2,6,23,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
-  .modal{background:#fff;border-radius:16px;border:1px solid var(--grid);max-width:680px;width:100%;box-shadow:0 18px 44px rgba(2,6,23,.25)}
-  .modal header{padding:14px 16px;border-bottom:1px solid var(--grid);display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .modal h3{margin:0;font-size:18px}
-  .modal .close{background:#f1f5ff;border:1px solid #dbeafe;color:#0b2574;border-radius:10px;padding:8px 10px;font-weight:800;cursor:pointer}
-  .modal .body{padding:16px;font-size:15px;color:#0f172a}
-  .modal .body p{margin:0 0 10px}
-  .modal .body code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:2px 6px}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th,td{border-bottom:1px solid #e5e7eb;padding:10px;text-align:left;font-size:15px}
+  th{background:#f3f6ff;color:#0b2574}
+  td input{width:100%;padding:8px;border:1px solid #e2e8f0;border-radius:8px;font-size:15px}
+  .right{text-align:right}
+  .hide{display:none}
+  footer{max-width:1100px;margin:10px auto 26px;padding:0 18px;text-align:center;color:#64748b;font-size:13px}
+  footer a{color:#0b2574;text-decoration:none}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <div class="titleCenter">
-      <h1>Simulador Indicador Produtividade</h1>
-      <a class="helpBtn" onclick="openHelp('geral')"><span class="helpIcon">?</span> Ajuda</a>
+    <h1>MVP - Simulador Indicadores de Metas Mobilizadoras</h1>
+    <div class="row" style="margin-top:12px;justify-content:center">
+      <div>
+        <label>Escolha o indicador</label>
+        <select id="indicador">
+          <option value="produtividade">Produtividade</option>
+          <option value="faturamento">Faturamento</option>
+          <option value="cobertura">Cobertura de Atendimento a Estudantes</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <!-- 1) Simulação do Resultado -->
-  <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">
-      <h2>1) Simulação do Resultado</h2>
-      <button class="btn" id="reset">Resetar</button>
-    </div>
-    <div class="grid">
-      <div class="cols-6">
-        <label>Resultado 1º ciclo</label>
-        <div class="suf"><input type="number" id="r1" step="0.01" value="17.72" readonly></div>
-        <label>Resultado 2º ciclo</label>
-        <div class="suf"><input type="number" id="r2" step="0.01" value="35.82" readonly></div>
-        <label>Resultado 3º ciclo</label>
-        <div class="suf"><input type="number" id="x" step="0.01" placeholder="ex.: 28,50"></div>
+  <!-- PRODUTIVIDADE -->
+  <section id="secProd" class="card">
+    <h2>Produtividade</h2>
+    <div class="row" style="margin:8px 0 4px;justify-content:space-between">
+      <div class="row" style="gap:24px">
+        <div><label>Resultado 1º ciclo (%)</label><div class="suf"><input id="p_r1" type="number" step="0.01" value="17.72" readonly></div></div>
+        <div><label>Resultado 2º ciclo (%)</label><div class="suf"><input id="p_r2" type="number" step="0.01" value="35.82" readonly></div></div>
+        <div><label>Resultado 3º ciclo (%)</label><div class="suf"><input id="p_r3" type="number" step="0.01" placeholder="ex.: 28,50"></div></div>
       </div>
-      <div class="cols-6">
-        <label>Empresas 1º ciclo</label>
-        <input type="number" id="n1" step="1" value="272" readonly>
-        <label>Empresas 2º ciclo</label>
-        <input type="number" id="n2" step="1" value="320" readonly>
-        <label>Empresas 3º ciclo</label>
-        <input type="number" id="n3" step="1" placeholder="ex.: 250">
+      <div class="row" style="gap:24px">
+        <div><label>Empresas 1º ciclo</label><input id="p_n1" type="number" step="1" value="272" readonly></div>
+        <div><label>Empresas 2º ciclo</label><input id="p_n2" type="number" step="1" value="320" readonly></div>
+        <div><label>Empresas 3º ciclo</label><input id="p_n3" type="number" step="1" placeholder="ex.: 250"></div>
       </div>
     </div>
+
     <div class="kpis">
-      <div class="kpi"><div class="title">Consolidado atual (1º+2º)</div><div id="curr" class="value">0,00%</div></div>
-      <div class="kpi"><div class="title">Consolidado final (com 3º ciclo)</div><div id="final" class="value">0,00%</div></div>
-      <div class="kpi">
-        <div class="title">Totais</div>
-        <div class="value" id="pesos">—</div>
-        <div class="muted" id="pesosDet">N1: — | N2: — | N3: —</div>
-      </div>
-    </div>
-    <div class="note">Fórmula: (Resultado1 × Empresas1 + Resultado2 × Empresas2 + Resultado3 × Empresas3) ÷ (Empresas1 + Empresas2 + Empresas3)</div>
-  </div>
-
-  <!-- 2) Simulação da Meta -->
-  <div class="card">
-    <div class="metaHead">
-      <h2>2) Simulação da Meta (CSN 95–115%)</h2>
-      <div class="metaRule">Regra: execução entre 95% e 115% da meta. Se a projeção ficar fora, ajuste a meta ou revise o cenário de resultado.</div>
+      <div class="kpi"><div class="title">Consolidado atual (1º+2º)</div><div id="p_curr" class="value">0,00%</div></div>
+      <div class="kpi"><div class="title">Consolidado final (com 3º ciclo)</div><div id="p_final" class="value">0,00%</div></div>
+      <div class="kpi"><div class="title">Totais</div><div class="value" id="p_tot">—</div><div class="muted" id="p_tot2">N1: — | N2: — | N3: —</div></div>
     </div>
 
-    <div class="metaGrid">
-      <div class="stack">
-        <div>
-          <label>Meta atual</label>
-          <div class="suf"><input type="number" id="T" step="0.01" value="18.00" readonly></div>
-        </div>
-        <div>
-          <label>Meta simulada</label>
-          <div class="suf"><input type="number" id="Tsim" step="0.01" placeholder="ex.: 22,50"></div>
-        </div>
+    <div class="note">Fórmula: (R1×N1 + R2×N2 + R3×N3) ÷ (N1 + N2 + N3) — percentuais informados como 18,00 = 18%.</div>
+
+    <div style="height:8px"></div>
+    <h3 style="margin:8px 0">Meta (CSN 95–115%)</h3>
+    <div class="row" style="gap:24px">
+      <div><label>Meta atual (%)</label><div class="suf"><input id="p_T" type="number" step="0.01" value="18.00" readonly></div></div>
+      <div><label>Meta simulada (%) (opcional)</label><div class="suf"><input id="p_Tsim" type="text" inputmode="decimal" placeholder="ex.: 22,00"></div></div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="title">Faixa 95–115% (meta atual)</div><div id="p_fx" class="value">—</div></div>
+      <div class="kpi"><div class="title">Execução vs. meta atual</div><div id="p_ex" class="value">—</div></div>
+      <div class="kpi"><div class="title">Status (meta atual)</div><div class="value"><span id="p_st" class="badge">—</span></div></div>
+    </div>
+    <div class="kpis" id="p_simRow" style="display:none">
+      <div class="kpi"><div class="title">Faixa 95–115% (meta simulada)</div><div id="p_fx2" class="value">—</div></div>
+      <div class="kpi"><div class="title">Execução vs. meta simulada</div><div id="p_ex2" class="value">—</div></div>
+      <div class="kpi"><div class="title">Status (meta simulada)</div><div class="value"><span id="p_st2" class="badge">—</span></div></div>
+    </div>
+  </section>
+
+  <!-- FATURAMENTO -->
+  <section id="secFat" class="card hide">
+    <h2>Faturamento</h2>
+    <div class="muted">Use o botão abaixo para carregar a lista completa de <b>projetos com faturamento</b> (já com a quantidade de <b>Público Direto</b>). Depois, preencha apenas a coluna <b>Média simples (%)</b>.</div>
+
+    <div class="row" style="margin-top:10px;gap:8px">
+      <button class="btn" id="loadPreset">Carregar projetos com faturamento</button>
+      <button class="btn" id="addRow">Adicionar projeto</button>
+      <button class="btn sec" id="clearRows">Limpar lista</button>
+      <button class="btn sec" id="pasteHelper">Colar dados</button>
+      <span class="muted">“Colar dados” aceita duas colunas: média%; público direto (TAB, ; ou espaço).</span>
+    </div>
+
+    <table id="fatTable">
+      <thead>
+        <tr>
+          <th style="width:45%">Projeto/Processo</th>
+          <th class="right" style="width:18%">Média simples (%)</th>
+          <th class="right" style="width:18%">Público Direto</th>
+          <th class="right" style="width:18%">Peso (auto)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <tr>
+          <th>Total</th>
+          <th class="right" id="fatAvg">—</th>
+          <th class="right" id="fatCli">0</th>
+          <th class="right" id="fatPeso">—</th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="kpis">
+      <div class="kpi"><div class="title">Média simples entre projetos</div><div id="f_media" class="value">0,00%</div></div>
+      <div class="kpi"><div class="title">Média ponderada (resultado do indicador)</div><div id="f_pond" class="value">0,00%</div></div>
+      <div class="kpi"><div class="title">Público Direto (soma)</div><div id="f_totalCli" class="value">0</div><div class="muted">Soma de respondentes (denominador da ponderação)</div></div>
+    </div>
+
+    <div style="height:8px"></div>
+    <h3 style="margin:8px 0">Meta (CSN 95–115%)</h3>
+    <div class="row" style="gap:24px">
+      <div><label>Meta atual (%)</label><div class="suf"><input id="f_T" type="number" step="0.01" value="12.00" readonly></div></div>
+      <div><label>Meta simulada (%) (opcional)</label><div class="suf"><input id="f_Tsim" type="text" inputmode="decimal" placeholder="ex.: 15,00"></div></div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="title">Faixa 95–115% (meta atual)</div><div id="f_fx" class="value">—</div></div>
+      <div class="kpi"><div class="title">Execução vs. meta atual</div><div id="f_ex" class="value">—</div></div>
+      <div class="kpi"><div class="title">Status (meta atual)</div><div class="value"><span id="f_st" class="badge">—</span></div></div>
+    </div>
+    <div class="kpis" id="f_simRow" style="display:none">
+      <div class="kpi"><div class="title">Faixa 95–115% (meta simulada)</div><div id="f_fx2" class="value">—</div></div>
+      <div class="kpi"><div class="title">Execução vs. meta simulada</div><div id="f_ex2" class="value">—</div></div>
+      <div class="kpi"><div class="title">Status (meta simulada)</div><div class="value"><span id="f_st2" class="badge">—</span></div></div>
+    </div>
+
+    <div class="note">Cálculo: para cada projeto i, peso_i = (Média_i × PúblicoDireto_i). Resultado = soma(peso_i) ÷ soma(PúblicoDireto_i). Percentuais: use 18,00 para 18%.</div>
+  </section>
+
+  <!-- COBERTURA DE ATENDIMENTO A ESTUDANTES -->
+  <section id="secCob" class="card hide">
+    <h2>Cobertura de Atendimento a Estudantes</h2>
+    <div class="muted">Informe somente o total de <b>Atendimentos</b>. O <b>Universo</b> é fixo (2.640.918).</div>
+
+    <div class="row" style="gap:24px;margin-top:8px">
+      <div>
+        <label>Atendimentos (nº)</label>
+        <input id="c_at" type="number" step="1" placeholder="ex.: 52000">
       </div>
-
-      <div class="kpisWide">
-        <!-- Meta atual -->
-        <div class="kpi">
-          <div class="title">Faixa 95%–115% (meta atual)</div>
-          <div id="faixa" class="value">—</div>
-        </div>
-        <div class="kpi">
-          <div class="title">Execução vs. meta atual</div>
-          <div id="exec" class="value">—</div>
-        </div>
-        <div class="kpi">
-          <div class="title">Status (meta atual)</div>
-          <div class="statusText"><span id="status" class="badge">—</span></div>
-        </div>
-
-        <!-- Meta simulada -->
-        <div class="kpi" id="simFaixaBox" style="display:none">
-          <div class="title">Faixa 95%–115% (meta simulada)</div>
-          <div id="simFaixa" class="value">—</div>
-        </div>
-        <div class="kpi" id="simExecBox" style="display:none">
-          <div class="title">Execução vs. meta simulada</div>
-          <div id="simExec" class="value">—</div>
-        </div>
-        <div class="kpi" id="simStatusBox" style="display:none">
-          <div class="title">Status (meta simulada)</div>
-          <div class="statusText"><span id="simStatus" class="badge">—</span></div>
-        </div>
+      <div>
+        <label>Universo de estudantes (nº)</label>
+        <input id="c_uni" type="number" step="1" value="2640918" readonly>
       </div>
     </div>
-  </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="title">Cobertura (Atendimentos ÷ Universo)</div><div id="c_cob" class="value">0,00%</div></div>
+      <div class="kpi"><div class="title">Atendimentos informados</div><div id="c_at_kpi" class="value">0</div></div>
+      <div class="kpi"><div class="title">Universo</div><div id="c_uni_kpi" class="value">2.640.918</div></div>
+    </div>
+
+    <div style="height:8px"></div>
+    <h3 style="margin:8px 0">Meta (CSN 95–115%)</h3>
+    <div class="row" style="gap:24px">
+      <div><label>Meta atual (%)</label><div class="suf"><input id="c_T" type="number" step="0.01" value="19.50" readonly></div></div>
+      <div><label>Meta simulada (%) (opcional)</label><div class="suf"><input id="c_Tsim" type="text" inputmode="decimal" placeholder="ex.: 22,00"></div></div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="title">Faixa 95–115% (meta atual)</div><div id="c_fx" class="value">—</div></div>
+      <div class="kpi"><div class="title">Execução vs. meta atual</div><div id="c_ex" class="value">—</div></div>
+      <div class="kpi"><div class="title">Status (meta atual)</div><div class="value"><span id="c_st" class="badge">—</span></div></div>
+    </div>
+    <div class="kpis" id="c_simRow" style="display:none">
+      <div class="kpi"><div class="title">Faixa 95–115% (meta simulada)</div><div id="c_fx2" class="value">—</div></div>
+      <div class="kpi"><div class="title">Execução vs. meta simulada</div><div id="c_ex2" class="value">—</div></div>
+      <div class="kpi"><div class="title">Status (meta simulada)</div><div class="value"><span id="c_st2" class="badge">—</span></div></div>
+    </div>
+
+    <div class="note">Fórmula: Cobertura = Atendimentos ÷ Universo. Percentuais: informe metas como 19,50 para 19,5%.</div>
+  </section>
 </div>
 
-<!-- Modal de ajuda (reutilizável) -->
-<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-  <div class="modal">
-    <header>
-      <h3 id="helpTitle">Ajuda</h3>
-      <button class="close" onclick="closeHelp()">Fechar</button>
-    </header>
-    <div class="body" id="helpBody">...</div>
+<footer>
+  MVP criado por <b>Julio Volpatto</b> — Unidade de Gestão Estratégica (UGE) • Sebrae/PR
+</footer>
+
+<!-- Modal para colar dados (faturamento) -->
+<div id="pasteModal" class="card" style="display:none;position:fixed;max-width:640px;left:50%;top:12%;transform:translateX(-50%);z-index:999">
+  <h3 style="margin:0 0 6px">Colar dados (duas colunas: média%; público direto)</h3>
+  <div class="muted">Ex.: <code>0,250[TAB]10</code> ou <code>25,0; 10</code>. O primeiro campo é percentual (vírgula/ponto) e o segundo é inteiro.</div>
+  <textarea id="pasteArea" style="width:100%;height:180px;margin-top:8px;border:1px solid #cbd5e1;border-radius:12px;padding:10px;font-family:'Figtree',ui-monospace,Consolas,monospace"></textarea>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" id="pasteApply">Aplicar</button>
+    <button class="btn sec" id="pasteCancel">Cancelar</button>
   </div>
 </div>
 
 <script>
-// Percentuais: entrada em % (18,00) -> decimal (0.18)
-function pctIn(id){
-  const el = document.getElementById(id);
-  if(!el) return 0;
-  const raw = (el.value||'').toString().replace(',','.');
-  const num = parseFloat(raw);
-  return isFinite(num) ? num/100 : 0;
-}
-function pct(x,dec=2){ return (x*100).toFixed(dec).replace('.',',') + '%'; }
-function ratio(x,dec=1){ return (x*100).toFixed(dec).replace('.',',') + '%'; }
+const $ = id => document.getElementById(id);
+const pctOut  = (x,dec=2)=>((x||0)*100).toFixed(dec).replace('.',',')+'%';
+const ratioOut= (x,dec=1)=>((x||0)*100).toFixed(dec).replace('.',',')+'%';
+const toDec   = v => { if(v==null||v==='') return 0; const n=parseFloat((''+v).replace(',','.')); return isFinite(n)? n/100:0; };
+const toNum   = v => { const n=parseFloat(v); return isFinite(n)? n:0; };
+const fmtInt  = n => (Math.round(n||0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
 
-function compute(){
-  const r1=pctIn('r1'), r2=pctIn('r2'), r3=pctIn('x');
-  const n1=parseFloat(document.getElementById('n1').value)||0;
-  const n2=parseFloat(document.getElementById('n2').value)||0;
-  const n3=parseFloat(document.getElementById('n3').value)||0;
-  const curr=(r1*n1 + r2*n2)/((n1+n2)||1);
-  const final=(r1*n1 + r2*n2 + r3*n3)/((n1+n2+n3)||1);
-  const total=(n1+n2+n3)||1;
-  const w1=n1/total, w2=n2/total, w3=n3/total;
-  return {r1,r2,r3,n1,n2,n3,curr,final,w1,w2,w3,total};
-}
+// Navegação
+$('indicador').addEventListener('change', e=>{
+  const val=e.target.value;
+  $('secProd').classList.toggle('hide', val!=='produtividade');
+  $('secFat').classList.toggle('hide',  val!=='faturamento');
+  $('secCob').classList.toggle('hide',  val!=='cobertura');
+});
 
-function computeMeta(final, Tdec){
-  const T = Tdec;
-  const low=0.95*T, high=1.15*T;
-  const exec = T>0 ? final/T : 0;
-  let status='ok', badge='Dentro da faixa';
-  if(exec>1.15){ status='bad'; badge='Acima de 115%'; }
-  else if(exec<0.95){ status='warn'; badge='Abaixo de 95%'; }
-  return {T,low,high,exec,status,badge};
-}
-
-function applyStatus(el, status, text){
-  el.className='badge ' + (status==='ok'?'ok':(status==='bad'?'bad':'warn'));
-  el.textContent=text;
-}
-
-function updateAll(){
-  const s=compute();
-  document.getElementById('curr').textContent = pct(s.curr,2);
-  document.getElementById('final').textContent = pct(s.final,2);
-  document.getElementById('pesos').textContent = `${s.total} empresas`;
-  document.getElementById('pesosDet').textContent = `N1: ${s.n1} | N2: ${s.n2} | N3: ${s.n3}`;
-
-  // Meta atual
-  const m = computeMeta(s.final, pctIn('T'));
-  document.getElementById('faixa').textContent = `${pct(m.low,2)} — ${pct(m.high,2)}`;
-  document.getElementById('exec').textContent = ratio(m.exec,1);
-  applyStatus(document.getElementById('status'), m.status,
-              (m.status==='ok')?'Dentro da faixa':(m.status==='bad'?'Acima de 115%':'Abaixo de 95%'));
-
-  // Meta simulada (opcional)
-  const TsimEl = document.getElementById('Tsim');
-  const Tsim = pctIn('Tsim');
-  const showSim = (TsimEl.value && !isNaN(Tsim) && Tsim>0);
-  document.getElementById('simFaixaBox').style.display = showSim ? 'block' : 'none';
-  document.getElementById('simExecBox').style.display = showSim ? 'block' : 'none';
-  document.getElementById('simStatusBox').style.display = showSim ? 'block' : 'none';
+// ===== PRODUTIVIDADE =====
+function prodCompute(){
+  const r1=toDec($('p_r1').value), r2=toDec($('p_r2').value), r3=toDec($('p_r3').value);
+  const n1=toNum($('p_n1').value), n2=toNum($('p_n2').value), n3=toNum($('p_n3').value);
+  const curr=(r1*n1+r2*n2)/Math.max(n1+n2,1);
+  const final=(r1*n1+r2*n2+r3*n3)/Math.max(n1+n2+n3,1);
+  $('p_curr').textContent=pctOut(curr);
+  $('p_final').textContent=pctOut(final);
+  $('p_tot').textContent=(n1+n2+n3)+' empresas';
+  $('p_tot2').textContent=`N1: ${n1} | N2: ${n2} | N3: ${n3}`;
+  const T=toDec($('p_T').value), rawTs=$('p_Tsim').value||'', Ts=toDec(rawTs);
+  const low=0.95*T, high=1.15*T, ex=T>0?final/T:0;
+  $('p_fx').textContent=`${pctOut(low)} — ${pctOut(high)}`;
+  $('p_ex').textContent=ratioOut(ex);
+  applyStatus($('p_st'),ex);
+  const showSim = rawTs.trim()!=='' && Ts>0;
+  $('p_simRow').style.display = showSim?'grid':'none';
   if(showSim){
-    const ms = computeMeta(s.final, Tsim);
-    document.getElementById('simFaixa').textContent = `${pct(ms.low,2)} — ${pct(ms.high,2)}`;
-    document.getElementById('simExec').textContent = ratio(ms.exec,1);
-    applyStatus(document.getElementById('simStatus'), ms.status,
-                (ms.status==='ok')?'Dentro da faixa':(ms.status==='bad'?'Acima de 115%':'Abaixo de 95%'));
+    const low2=0.95*Ts, high2=1.15*Ts, ex2=Ts>0?final/Ts:0;
+    $('p_fx2').textContent=`${pctOut(low2)} — ${pctOut(high2)}`;
+    $('p_ex2').textContent=ratioOut(ex2);
+    applyStatus($('p_st2'),ex2);
   }
 }
+['p_r3','p_n3','p_Tsim'].forEach(id=>$(id).addEventListener('input', prodCompute));
+prodCompute();
 
-// Help modal
-const helpTexts = {
-  geral: `<p><b>Como usar o simulador</b></p>
-          <p>1) Informe o <b>Resultado 3º ciclo</b> (em %) e a <b>Empresas 3º ciclo</b> (em número). Os ciclos 1 e 2 ficam bloqueados.</p>
-          <p>2) Veja o <b>Consolidado final</b> calculado automaticamente.</p>
-          <p>3) Na seção de <b>Meta</b>, você pode testar uma <b>Meta simulada</b> para verificar a faixa 95–115% e o status.</p>
-          <p>A fórmula é uma <b>média ponderada</b>: (Resultado1 × Empresas1 + Resultado2 × Empresas2 + Resultado3 × Empresas3) ÷ (Empresas1 + Empresas2 + Empresas3).</p>`
-};
-
-function openHelp(key){
-  const ov = document.getElementById('overlay');
-  const body = document.getElementById('helpBody');
-  const title = document.getElementById('helpTitle');
-  body.innerHTML = helpTexts[key] || '...';
-  title.textContent = 'Ajuda do Simulador';
-  ov.style.display='flex';
+// ===== FATURAMENTO =====
+const fatTbody = $('fatTable').querySelector('tbody');
+function addRow(data={proj:'',media:'',clientes:''}){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input type="text" value="${data.proj||''}" placeholder="Projeto X"></td>
+    <td class="right"><input type="number" step="0.01" value="${data.media||''}" placeholder="ex.: 25,00"></td>
+    <td class="right"><input type="number" step="1" value="${data.clientes||''}" placeholder="ex.: 10"></td>
+    <td class="right"><span class="muted">—</span></td>`;
+  fatTbody.appendChild(tr);
+  tr.querySelectorAll('input').forEach(el=>el.addEventListener('input', fatCompute));
 }
-function closeHelp(){ document.getElementById('overlay').style.display='none'; }
-document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeHelp(); });
+function clearRows(){ fatTbody.innerHTML=''; fatCompute(); }
+$('addRow').addEventListener('click',()=>addRow());
+$('clearRows').addEventListener('click',clearRows);
 
-['x','n3','Tsim'].forEach(id=>document.getElementById(id).addEventListener('input', updateAll));
-document.getElementById('reset').addEventListener('click', ()=>{
-  document.getElementById('x').value=30.00; document.getElementById('n3').value=250; document.getElementById('Tsim').value=''; updateAll();
+// Colar dados
+function splitCols(line){ if(line.indexOf('\t')>=0) return line.split('\t'); if(line.indexOf(';')>=0) return line.split(';'); return line.trim().split(/\s{2,}|\s+/); }
+function parsePercentToken(tok){ if(!tok) return NaN; let t=String(tok).trim().replace('%','').replace('\u00A0',' ').replace(',','.'); let v=parseFloat(t); if(!isFinite(v)) return NaN; if(v<=1) v=v*100; return v; }
+function parseClientesToken(tok){ if(!tok) return NaN; let t=String(tok).trim().replace(/\./g,'').replace(/\s/g,'').replace(',','.'); let n=parseFloat(t); return isFinite(n)? Math.round(n):NaN; }
+$('pasteHelper').addEventListener('click',()=>{ $('pasteModal').style.display='block'; $('pasteArea').value=''; });
+$('pasteCancel').addEventListener('click',()=>{ $('pasteModal').style.display='none'; });
+$('pasteApply').addEventListener('click',()=>{
+  const lines=$('pasteArea').value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  lines.forEach(l=>{
+    const parts=splitCols(l).filter(Boolean);
+    if(parts.length>=2){
+      const media=parsePercentToken(parts[0]);
+      const client=parseClientesToken(parts[1]);
+      addRow({media:isFinite(media)?media.toFixed(2):'', clientes:isFinite(client)?String(client):''});
+    }
+  });
+  $('pasteModal').style.display='none';
+  fatCompute();
 });
-updateAll();
+
+function fatCompute(){
+  const rows=Array.from(fatTbody.querySelectorAll('tr'));
+  let sumClientes=0,sumPesos=0,sumMedias=0,nProjetos=0;
+  rows.forEach(tr=>{
+    const mediaStr=tr.children[1].querySelector('input').value;
+    const cliStr  =tr.children[2].querySelector('input').value;
+    const mediaDec=toDec(mediaStr);
+    const clientes=toNum(cliStr);
+    if(clientes>0 || mediaDec>0){ nProjetos++; sumClientes+=clientes; sumPesos+=(mediaDec*clientes); sumMedias+=mediaDec; }
+    const peso=(mediaDec*clientes);
+    tr.children[3].innerHTML=`<b>${pctOut(peso)}</b>`;
+  });
+  const mediaSimples=nProjetos>0?sumMedias/nProjetos:0;
+  const mediaPonderada=sumClientes>0?sumPesos/sumClientes:0;
+
+  $('fatCli').textContent=sumClientes;
+  $('fatPeso').textContent=pctOut(sumPesos);
+  $('fatAvg').textContent=pctOut(mediaSimples);
+  $('f_media').textContent=pctOut(mediaSimples);
+  $('f_pond').textContent=pctOut(mediaPonderada);
+  $('f_totalCli').textContent=sumClientes;
+
+  const T=toDec($('f_T').value), rawTs=$('f_Tsim').value||'', Ts=toDec(rawTs);
+  const low=0.95*T, high=1.15*T, ex=T>0?mediaPonderada/T:0;
+  $('f_fx').textContent=`${pctOut(low)} — ${pctOut(high)}`;
+  $('f_ex').textContent=ratioOut(ex);
+  applyStatus($('f_st'),ex);
+  const showSim = rawTs.trim()!=='' && Ts>0;
+  $('f_simRow').style.display = showSim?'grid':'none';
+  if(showSim){
+    const low2=0.95*Ts, high2=1.15*Ts, ex2=Ts>0?mediaPonderada/Ts:0;
+    $('f_fx2').textContent=`${pctOut(low2)} — ${pctOut(high2)}`;
+    $('f_ex2').textContent=ratioOut(ex2);
+    applyStatus($('f_st2'),ex2);
+  }
+}
+['f_Tsim','f_T'].forEach(id=>{ $(id).addEventListener('input', fatCompute); $(id).addEventListener('change', fatCompute); $(id).addEventListener('blur', fatCompute); });
+
+// Lista sob demanda (igual versão anterior)
+const PRESET = `7173 - Comércio e Serviços - Regional Norte - Revitalização da Rua Ponta Grossa	17
+7305 - Startup - Regional Sul	36
+7310 - Startup - Regional Leste	30
+7312 - Startup - Regional Noroeste	55
+7367 - Agronegócio - Erva-Mate - Regional Sul	18
+7371 - Tic - Regional Norte	33
+7372 - Agronegócio - Hortifruticultura - Regional Centro	4
+7377 - Agronegócio - Fruticultura/Citricultura - Vale Do Ribeira	25
+7385 - Turismo Regional Oeste - DTI Foz Do Iguaçu	62
+7413 - Indústria - Eletrometalmecânico - Norte	56
+7421 - Indústria - Metalmecânico, Moveleiro, Moda e Alimentos - Sul	43
+7443 - Startup - Regional Oeste	41
+7445 - Setor Tic - Regional Curitiba	18
+7448 - Indústria – Alimentos e Bebidas – Norte Pioneiro	12
+7453 - Indústria - Centro - Campos Gerais - Alimentos, Móveis e Construção Civil	39
+7457 - TIC - Regional Noroeste	34
+7462 - Startup - Regional Curitiba	53
+7463 - Tic - Regional Oeste	40
+7467 - Setorial Turismo - Excelência Setorial - Curitiba	38
+7475 - Tic - Regional Sul	26
+7477 - Mercado Digital - Regional Noroeste	30
+7492 - Agronegócio - Apicultura E Meliponicultura - Regional Centro	20
+7493 - Turismo Na RMC - Regional Leste	50
+7497 - Comércio e Serviços - Varejo Inteligente - Regional Leste	40
+7501 - Agronegócio - Agroindústria - Regional Sul	5
+7502 - Agronegócio - Orgânicos - Vale Do Ribeira	10
+7507 - Agronegócio - Leite E Derivados - Território Paraná Centro	20
+7508 - Agronegócio - Agroindústria - Território Campos Gerais	10
+7510 - Agronegócio - Fruticultura - Norte Pioneiro	25
+7515 - Comércio E Serviços - Varejo Inteligente Regional Oeste	50
+7516 - Agronegócio - Orgânicos - Regional Leste	24
+7520 - Indicações Geográficas - Regional Centro	3
+7522 - Agronegócio - Agroindústria - Norte Pioneiro	10
+7524 - Agronegócio - Leite E Derivados - Regional Oeste	70
+7530 - Indústria - Construção Civil - Norte	22
+7532 - Agronegócio - Orgânicos - Território Procopense	15
+7533 - Indústria - Norte - Moda, Vestuário e Eletro Metal Mecânico - Vale do Ivaí	12
+7536 - Comércio E Serviços - Varejo Inteligente - Regional Noroeste	32
+7539 - Agronegócio - Piscicultura - Regional Oeste	20
+7551 - Indústria - Regional Centro - Vale Dos Pinheirais	2
+7556 - Indústria - Regional Centro - Vale Do Tibagi	3
+7560 - Agronegócio - Apicultura E Meliponicultura - Regional Leste	5
+7563 - Agronegócio - Apicultura e Meliponicultura - Norte Pioneiro	5
+7564 - Agronegócio - Apicultura E Meliponicultura - Regional Sul	52
+7565 - Agronegócio - Apicultura E Meliponicultura - Vale Do Ribeira	10
+7577 - Indicação Geográfica - Regional Oeste	2
+7579 - Indústria - Centro - Alimentos - Paraná Centro	5
+7581 - Tic - Regional Centro	15
+7585 - Indicação Geográfica - Regional Noroeste - Território Terra Roxa	2
+7586 - Indicação Geográfica- Norte Pioneiro	30
+7588 - Startup - Regional Centro	25
+7590 - Startup - Regional Norte	43
+7592 - Turismo DTI Guarapuava e Serras Nascentes Da Regional Centro	10
+7593 - Agronegócio - Agroindústria - Regional Leste	15
+7594 - Agronegócio - Leite E Derivados - Território Arenito Caiuá	20
+7598 - Comércio E Serviços - Varejo Inteligente - Regional Centro	25
+7601 - Turismo No Litoral Do Paraná - Regional Leste	20
+7612 - Turismo Mice e Vale Do Tibagi Da Regional Centro	10
+7620 - Indústria - Norte - Madeira e Móveis - Arapongas	12
+7624 - Agronegócio - Agroindústrias - Regional Oeste	20
+7627 - Comércio e Serviços - Varejo Inteligente - Regional Norte	30
+7629 - Agronegócio - Leite e Derivados - Norte Pioneiro	10
+7630 - Indicação Geográfica - Regional Sul	3
+7634 - Agronegócio - Proteína Animal: Carnes Nobres – Regional Noroeste	10
+7641 - Agronegócio - Leite E Derivados - Regional Sul	12
+7644 - Turismo - Regional Sul - Excelência Setorial	26
+7655 - Turismo Em Terra Roxa - Regional Noroeste	45
+7660 - Agronegócio - Orgânicos - Regional Oeste	50
+7661 - Turismo em Áreas Naturais e Patrimônio Cultural no Vale dos Pinheirais da Regional Centro	10
+7662 - Turismo Dti Ponta Grossa e Campos Gerais Da Regional Centro	26
+7663 - Turismo - Regional Norte - Vale Do Ivaí	13
+7665 - Turismo Regional Norte - Território Paranapanema	13
+7667 - Agronegócio - Vitivinicultura - Regional Sul	10
+7670 - Agronegócio - Café - Norte Pioneiro	30
+7671 - Agronegócio - Hortifruticultura - Regional Leste	15
+7672 - Indicação Geográfica - Regional Leste	5
+7675 - Indústria – Norte - Alimentos e bebidas – Norte do Paraná	12
+7676 - Comércio E Serviços - Varejo Inteligente - Regional Sul	31
+7678 - Indústria - Metalmecânica, Biotecnologia, Alimentos e Bebidas - Leste	114
+7686 - Agronegócio - Orgânicos - Norte Pioneiro	30
+7689 - Industria - Saúde - Norte	26
+7694 - Turismo Regional Norte - Norte Do Paraná	29
+7695 - Indústria - Oeste - Metalmecânica	91
+7699 - Turismo Regional Norte - Norte Pioneiro	14
+7709 - Turismo No Arenito Caiuá Na Regional Noroeste	24
+7711 - Indicação Geográfica - Território Norte Central	1
+7712 - Indicação Geográfica - Território Vale Do Ivaí	15
+7724 - Indústria - MMecânico, C Civil, Móveis e Vestuário - Noroeste	58
+7727 - Indústria – Químico e Materiais – Norte - Londrina e região	12
+7734 - Agronegócio - Agroindústria - Regional Noroeste	20
+7743 - Tic - Regional Leste	20
+7748 - Comércio E Serviços - Saúde E Bem Estar - Regional Noroeste	21
+7749 - Indústria – Alimentos, Construção Civil e Metal Mecânica - Curitiba	100
+7754 - Comércio e Serviços – Regional Curitiba – Varejo Inteligente	18
+7757 - Agronegócio - Agroindústria - Norte do Paraná	35
+7758 - Agronegócio - Fruticultura - Território Vale do Ivaí	25
+7763 - Agronegócio – Piscicultura - Castro	16
+7764 - Revitalização de Espaços Comerciais - Paranavaí	20
+7766 - TIC – Paraná Centro	10
+7767 - Comércio e Serviços – Paraná Centro	20
+7768 - Startup – Paraná Centro	20`.trim();
+
+function loadPreset(){
+  clearRows();
+  const lines = PRESET.split(/\r?\n/);
+  lines.forEach(l=>{
+    const parts = l.split('\t');
+    if(parts.length>=2){
+      const proj = parts[0].trim();
+      const cli  = parseInt(parts[1].trim(),10);
+      if(proj && Number.isFinite(cli)) addRow({proj, clientes:String(cli), media:''});
+    }
+  });
+  fatCompute();
+}
+$('loadPreset').addEventListener('click', loadPreset);
+
+// ===== COBERTURA DE ATENDIMENTO A ESTUDANTES =====
+function cobCompute(){
+  const at = toNum($('c_at').value);
+  const uni = toNum($('c_uni').value) || 2640918;
+  const cob = uni>0 ? at/uni : 0;
+
+  $('c_cob').textContent = pctOut(cob);
+  $('c_at_kpi').textContent = fmtInt(at);
+  $('c_uni_kpi').textContent = fmtInt(uni);
+
+  const T = toDec($('c_T').value);
+  const rawTs = $('c_Tsim').value||'';
+  const Ts = toDec(rawTs);
+
+  const low=0.95*T, high=1.15*T, ex=T>0?cob/T:0;
+  $('c_fx').textContent=`${pctOut(low)} — ${pctOut(high)}`;
+  $('c_ex').textContent=ratioOut(ex);
+  applyStatus($('c_st'),ex);
+
+  const showSim = rawTs.trim()!=='' && Ts>0;
+  $('c_simRow').style.display = showSim?'grid':'none';
+  if(showSim){
+    const low2=0.95*Ts, high2=1.15*Ts, ex2=Ts>0?cob/Ts:0;
+    $('c_fx2').textContent=`${pctOut(low2)} — ${pctOut(high2)}`;
+    $('c_ex2').textContent=ratioOut(ex2);
+    applyStatus($('c_st2'),ex2);
+  }
+}
+['c_at','c_Tsim'].forEach(id=>$(id).addEventListener('input', cobCompute));
+cobCompute();
+
+// Utilitário de status (compartilhado)
+function applyStatus(el,exec){
+  let cls='ok',txt='Dentro da faixa';
+  if(exec>1.15){cls='bad';txt='Acima de 115%';}
+  else if(exec<0.95){cls='warn';txt='Abaixo de 95%';}
+  el.className='badge '+cls; el.textContent=txt;
+}
 </script>
 </body>
 </html>
