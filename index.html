@@ -27,6 +27,7 @@
   .kpi .title{font-size:13px;color:#334155}
   .kpi .value{font-size:26px;font-weight:800;color:var(--azul);line-height:1.1}
   .muted{color:#64748b;font-size:13px}
+  .sub{color:#64748b;font-size:12px;margin-top:4px} /* linha menor sob a faixa */
   .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
   .ok{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
   .warn{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}
@@ -58,7 +59,7 @@
     </div>
   </div>
 
-  <!-- PRODUTIVIDADE -->
+  <!-- PRODUTIVIDADE (igual) -->
   <section id="secProd" class="card">
     <h2>Produtividade</h2>
     <div class="row" style="margin:8px 0 4px;justify-content:space-between">
@@ -101,7 +102,7 @@
     </div>
   </section>
 
-  <!-- FATURAMENTO -->
+  <!-- FATURAMENTO (igual) -->
   <section id="secFat" class="card hide">
     <h2>Faturamento</h2>
     <div class="muted">Use o botão abaixo para carregar a lista completa de <b>projetos com faturamento</b> (já com a quantidade de <b>Público Direto</b>). Depois, preencha apenas a coluna <b>Média simples (%)</b>.</div>
@@ -161,7 +162,7 @@
     <div class="note">Cálculo: para cada projeto i, peso_i = (Média_i × PúblicoDireto_i). Resultado = soma(peso_i) ÷ soma(PúblicoDireto_i). Percentuais: use 18,00 para 18%.</div>
   </section>
 
-  <!-- COBERTURA DE ATENDIMENTO A ESTUDANTES -->
+  <!-- COBERTURA DE ATENDIMENTO A ESTUDANTES (com valores absolutos nas faixas) -->
   <section id="secCob" class="card hide">
     <h2>Cobertura de Atendimento a Estudantes</h2>
     <div class="muted">Informe somente o total de <b>Atendimentos</b>. O <b>Universo</b> é fixo (2.640.918).</div>
@@ -191,12 +192,20 @@
     </div>
 
     <div class="kpis">
-      <div class="kpi"><div class="title">Faixa 95–115% (meta atual)</div><div id="c_fx" class="value">—</div></div>
+      <div class="kpi">
+        <div class="title">Faixa 95–115% (meta atual)</div>
+        <div id="c_fx" class="value">—</div>
+        <div id="c_fx_abs" class="sub">Atendimentos: —</div>
+      </div>
       <div class="kpi"><div class="title">Execução vs. meta atual</div><div id="c_ex" class="value">—</div></div>
       <div class="kpi"><div class="title">Status (meta atual)</div><div class="value"><span id="c_st" class="badge">—</span></div></div>
     </div>
     <div class="kpis" id="c_simRow" style="display:none">
-      <div class="kpi"><div class="title">Faixa 95–115% (meta simulada)</div><div id="c_fx2" class="value">—</div></div>
+      <div class="kpi">
+        <div class="title">Faixa 95–115% (meta simulada)</div>
+        <div id="c_fx2" class="value">—</div>
+        <div id="c_fx2_abs" class="sub">Atendimentos: —</div>
+      </div>
       <div class="kpi"><div class="title">Execução vs. meta simulada</div><div id="c_ex2" class="value">—</div></div>
       <div class="kpi"><div class="title">Status (meta simulada)</div><div class="value"><span id="c_st2" class="badge">—</span></div></div>
     </div>
@@ -209,7 +218,7 @@
   MVP criado por <b>Julio Volpatto</b> — Unidade de Gestão Estratégica (UGE) • Sebrae/PR
 </footer>
 
-<!-- Modal para colar dados (faturamento) -->
+<!-- Modal (faturamento) -->
 <div id="pasteModal" class="card" style="display:none;position:fixed;max-width:640px;left:50%;top:12%;transform:translateX(-50%);z-index:999">
   <h3 style="margin:0 0 6px">Colar dados (duas colunas: média%; público direto)</h3>
   <div class="muted">Ex.: <code>0,250[TAB]10</code> ou <code>25,0; 10</code>. O primeiro campo é percentual (vírgula/ponto) e o segundo é inteiro.</div>
@@ -263,7 +272,7 @@ function prodCompute(){
 ['p_r3','p_n3','p_Tsim'].forEach(id=>$(id).addEventListener('input', prodCompute));
 prodCompute();
 
-// ===== FATURAMENTO =====
+// ===== FATURAMENTO ===== (sem mudanças de lógica)
 const fatTbody = $('fatTable').querySelector('tbody');
 function addRow(data={proj:'',media:'',clientes:''}){
   const tr=document.createElement('tr');
@@ -279,10 +288,10 @@ function clearRows(){ fatTbody.innerHTML=''; fatCompute(); }
 $('addRow').addEventListener('click',()=>addRow());
 $('clearRows').addEventListener('click',clearRows);
 
-// Colar dados
 function splitCols(line){ if(line.indexOf('\t')>=0) return line.split('\t'); if(line.indexOf(';')>=0) return line.split(';'); return line.trim().split(/\s{2,}|\s+/); }
 function parsePercentToken(tok){ if(!tok) return NaN; let t=String(tok).trim().replace('%','').replace('\u00A0',' ').replace(',','.'); let v=parseFloat(t); if(!isFinite(v)) return NaN; if(v<=1) v=v*100; return v; }
 function parseClientesToken(tok){ if(!tok) return NaN; let t=String(tok).trim().replace(/\./g,'').replace(/\s/g,'').replace(',','.'); let n=parseFloat(t); return isFinite(n)? Math.round(n):NaN; }
+
 $('pasteHelper').addEventListener('click',()=>{ $('pasteModal').style.display='block'; $('pasteArea').value=''; });
 $('pasteCancel').addEventListener('click',()=>{ $('pasteModal').style.display='none'; });
 $('pasteApply').addEventListener('click',()=>{
@@ -337,7 +346,7 @@ function fatCompute(){
 }
 ['f_Tsim','f_T'].forEach(id=>{ $(id).addEventListener('input', fatCompute); $(id).addEventListener('change', fatCompute); $(id).addEventListener('blur', fatCompute); });
 
-// Lista sob demanda (igual versão anterior)
+// Lista de projetos (idêntica à anterior)
 const PRESET = `7173 - Comércio e Serviços - Regional Norte - Revitalização da Rua Ponta Grossa	17
 7305 - Startup - Regional Sul	36
 7310 - Startup - Regional Leste	30
@@ -455,7 +464,7 @@ function loadPreset(){
 }
 $('loadPreset').addEventListener('click', loadPreset);
 
-// ===== COBERTURA DE ATENDIMENTO A ESTUDANTES =====
+// ===== COBERTURA =====
 function cobCompute(){
   const at = toNum($('c_at').value);
   const uni = toNum($('c_uni').value) || 2640918;
@@ -465,20 +474,25 @@ function cobCompute(){
   $('c_at_kpi').textContent = fmtInt(at);
   $('c_uni_kpi').textContent = fmtInt(uni);
 
+  // Meta atual
   const T = toDec($('c_T').value);
-  const rawTs = $('c_Tsim').value||'';
-  const Ts = toDec(rawTs);
-
   const low=0.95*T, high=1.15*T, ex=T>0?cob/T:0;
   $('c_fx').textContent=`${pctOut(low)} — ${pctOut(high)}`;
+  const lowAbs = Math.round(low*uni), highAbs = Math.round(high*uni);
+  $('c_fx_abs').textContent = `Atendimentos: ${fmtInt(lowAbs)} — ${fmtInt(highAbs)}`;
   $('c_ex').textContent=ratioOut(ex);
   applyStatus($('c_st'),ex);
 
+  // Meta simulada (se houver)
+  const rawTs = $('c_Tsim').value||'';
+  const Ts = toDec(rawTs);
   const showSim = rawTs.trim()!=='' && Ts>0;
   $('c_simRow').style.display = showSim?'grid':'none';
   if(showSim){
     const low2=0.95*Ts, high2=1.15*Ts, ex2=Ts>0?cob/Ts:0;
     $('c_fx2').textContent=`${pctOut(low2)} — ${pctOut(high2)}`;
+    const lowAbs2 = Math.round(low2*uni), highAbs2 = Math.round(high2*uni);
+    $('c_fx2_abs').textContent = `Atendimentos: ${fmtInt(lowAbs2)} — ${fmtInt(highAbs2)}`;
     $('c_ex2').textContent=ratioOut(ex2);
     applyStatus($('c_st2'),ex2);
   }
@@ -486,7 +500,7 @@ function cobCompute(){
 ['c_at','c_Tsim'].forEach(id=>$(id).addEventListener('input', cobCompute));
 cobCompute();
 
-// Utilitário de status (compartilhado)
+// Status visual comum
 function applyStatus(el,exec){
   let cls='ok',txt='Dentro da faixa';
   if(exec>1.15){cls='bad';txt='Acima de 115%';}
