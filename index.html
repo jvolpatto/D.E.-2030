@@ -582,7 +582,117 @@ function addRow(data={proj:'',media:'',clientes:''}){
 function clearRows(){ fatTbody.innerHTML=''; fatCompute(); }
 $('addRow').addEventListener('click',()=>addRow());
 $('clearRows').addEventListener('click',clearRows);
-$('loadPreset').addEventListener('click',()=>{ alert('Carregamento de projetos pode ser ligado aqui (lista grande).'); });
+
+/* LISTA PADRÃO DE PROJETOS (Público Direto) */
+const FAT_PRESET = [
+  {proj:'7173 - Comércio e Serviços - Regional Norte - Revitalização da Rua Ponta Grossa', clientes:17},
+  {proj:'7305 - Startup - Regional Sul', clientes:36},
+  {proj:'7310 - Startup - Regional Leste', clientes:30},
+  {proj:'7312 - Startup - Regional Noroeste', clientes:55},
+  {proj:'7367 - Agronegócio - Erva-Mate - Regional Sul', clientes:18},
+  {proj:'7371 - Tic - Regional Norte', clientes:33},
+  {proj:'7372 - Agronegócio - Hortifruticultura - Regional Centro', clientes:4},
+  {proj:'7377 - Agronegócio - Fruticultura/Citricultura - Vale Do Ribeira', clientes:25},
+  {proj:'7385 - Turismo Regional Oeste - DTI Foz Do Iguaçu', clientes:62},
+  {proj:'7413 - Indústria - Eletrometalmecânico - Norte', clientes:56},
+  {proj:'7421 - Indústria - Metalmecânico, Moveleiro, Moda e Alimentos - Sul', clientes:43},
+  {proj:'7443 - Startup - Regional Oeste', clientes:41},
+  {proj:'7445 - Setor Tic - Regional Curitiba', clientes:18},
+  {proj:'7448 - Indústria – Alimentos e Bebidas – Norte Pioneiro', clientes:12},
+  {proj:'7453 - Indústria - Centro - Campos Gerais - Alimentos, Móveis e Construção Civil', clientes:39},
+  {proj:'7457 - TIC - Regional Noroeste', clientes:34},
+  {proj:'7462 - Startup - Regional Curitiba', clientes:53},
+  {proj:'7463 - Tic - Regional Oeste', clientes:40},
+  {proj:'7467 - Setorial Turismo - Excelência Setorial - Curitiba', clientes:38},
+  {proj:'7475 - Tic - Regional Sul', clientes:26},
+  {proj:'7477 - Mercado Digital - Regional Noroeste', clientes:30},
+  {proj:'7492 - Agronegócio - Apicultura E Meliponicultura - Regional Centro', clientes:20},
+  {proj:'7493 - Turismo Na RMC - Regional Leste', clientes:50},
+  {proj:'7497 - Comércio e Serviços - Varejo Inteligente - Regional Leste', clientes:40},
+  {proj:'7501 - Agronegócio - Agroindústria - Regional Sul', clientes:5},
+  {proj:'7502 - Agronegócio - Orgânicos - Vale Do Ribeira', clientes:10},
+  {proj:'7507 - Agronegócio - Leite E Derivados - Território Paraná Centro', clientes:20},
+  {proj:'7508 - Agronegócio - Agroindústria - Território Campos Gerais', clientes:10},
+  {proj:'7510 - Agronegócio - Fruticultura - Norte Pioneiro', clientes:25},
+  {proj:'7515 - Comércio E Serviços - Varejo Inteligente Regional Oeste', clientes:50},
+  {proj:'7516 - Agronegócio - Orgânicos - Regional Leste', clientes:24},
+  {proj:'7520 - Indicações Geográficas - Regional Centro', clientes:3},
+  {proj:'7522 - Agronegócio - Agroindústria - Norte Pioneiro', clientes:10},
+  {proj:'7524 - Agronegócio - Leite E Derivados - Regional Oeste', clientes:70},
+  {proj:'7530 - Indústria - Construção Civil - Norte', clientes:22},
+  {proj:'7532 - Agronegócio - Orgânicos - Território Procopense', clientes:15},
+  {proj:'7533 - Indústria - Norte - Moda, Vestuário e Eletro Metal Mecânico - Vale do Ivaí', clientes:12},
+  {proj:'7536 - Comércio E Serviços - Varejo Inteligente - Regional Noroeste', clientes:32},
+  {proj:'7539 - Agronegócio - Piscicultura - Regional Oeste', clientes:20},
+  {proj:'7551 - Indústria - Regional Centro - Vale Dos Pinheirais', clientes:2},
+  {proj:'7556 - Indústria - Regional Centro - Vale Do Tibagi', clientes:3},
+  {proj:'7560 - Agronegócio - Apicultura E Meliponicultura - Regional Leste', clientes:5},
+  {proj:'7563 - Agronegócio - Apicultura e Meliponicultura - Norte Pioneiro', clientes:5},
+  {proj:'7564 - Agronegócio - Apicultura E Meliponicultura - Regional Sul', clientes:52},
+  {proj:'7565 - Agronegócio - Apicultura E Meliponicultura - Vale Do Ribeira', clientes:10},
+  {proj:'7577 - Indicação Geográfica - Regional Oeste', clientes:2},
+  {proj:'7579 - Indústria - Centro - Alimentos - Paraná Centro', clientes:5},
+  {proj:'7581 - Tic - Regional Centro', clientes:15},
+  {proj:'7585 - Indicação Geográfica - Regional Noroeste - Território Terra Roxa', clientes:2},
+  {proj:'7586 - Indicação Geográfica- Norte Pioneiro', clientes:30},
+  {proj:'7588 - Startup - Regional Centro', clientes:25},
+  {proj:'7590 - Startup - Regional Norte', clientes:43},
+  {proj:'7592 - Turismo DTI Guarapuava e Serras Nascentes Da Regional Centro', clientes:10},
+  {proj:'7593 - Agronegócio - Agroindústria - Regional Leste', clientes:15},
+  {proj:'7594 - Agronegócio - Leite E Derivados - Território Arenito Caiuá', clientes:20},
+  {proj:'7598 - Comércio E Serviços - Varejo Inteligente - Regional Centro', clientes:25},
+  {proj:'7601 - Turismo No Litoral Do Paraná - Regional Leste', clientes:20},
+  {proj:'7612 - Turismo Mice e Vale Do Tibagi Da Regional Centro', clientes:10},
+  {proj:'7620 - Indústria - Norte - Madeira e Móveis - Arapongas', clientes:12},
+  {proj:'7624 - Agronegócio - Agroindústrias - Regional Oeste', clientes:20},
+  {proj:'7627 - Comércio e Serviços - Varejo Inteligente - Regional Norte', clientes:30},
+  {proj:'7629 - Agronegócio - Leite e Derivados - Norte Pioneiro', clientes:10},
+  {proj:'7630 - Indicação Geográfica - Regional Sul', clientes:3},
+  {proj:'7634 - Agronegócio - Proteína Animal: Carnes Nobres – Regional Noroeste', clientes:10},
+  {proj:'7641 - Agronegócio - Leite E Derivados - Regional Sul', clientes:12},
+  {proj:'7644 - Turismo - Regional Sul - Excelência Setorial', clientes:26},
+  {proj:'7655 - Turismo Em Terra Roxa - Regional Noroeste', clientes:45},
+  {proj:'7660 - Agronegócio - Orgânicos - Regional Oeste', clientes:50},
+  {proj:'7661 - Turismo em Áreas Naturais e Patrimônio Cultural no Vale dos Pinheirais da Regional Centro', clientes:10},
+  {proj:'7662 - Turismo Dti Ponta Grossa e Campos Gerais Da Regional Centro', clientes:26},
+  {proj:'7663 - Turismo - Regional Norte - Vale Do Ivaí', clientes:13},
+  {proj:'7665 - Turismo Regional Norte - Território Paranapanema', clientes:13},
+  {proj:'7667 - Agronegócio - Vitivinicultura - Regional Sul', clientes:10},
+  {proj:'7670 - Agronegócio - Café - Norte Pioneiro', clientes:30},
+  {proj:'7671 - Agronegócio - Hortifruticultura - Regional Leste', clientes:15},
+  {proj:'7672 - Indicação Geográfica - Regional Leste', clientes:5},
+  {proj:'7675 - Indústria – Norte - Alimentos e bebidas – Norte do Paraná', clientes:12},
+  {proj:'7676 - Comércio E Serviços - Varejo Inteligente - Regional Sul', clientes:31},
+  {proj:'7678 - Indústria - Metalmecânica, Biotecnologia, Alimentos e Bebidas - Leste', clientes:114},
+  {proj:'7686 - Agronegócio - Orgânicos - Norte Pioneiro', clientes:30},
+  {proj:'7689 - Industria - Saúde - Norte', clientes:26},
+  {proj:'7694 - Turismo Regional Norte - Norte Do Paraná', clientes:29},
+  {proj:'7695 - Indústria - Oeste - Metalmecânica', clientes:91},
+  {proj:'7699 - Turismo Regional Norte - Norte Pioneiro', clientes:14},
+  {proj:'7709 - Turismo No Arenito Caiuá Na Regional Noroeste', clientes:24},
+  {proj:'7711 - Indicação Geográfica - Território Norte Central', clientes:1},
+  {proj:'7712 - Indicação Geográfica - Território Vale Do Ivaí', clientes:15},
+  {proj:'7724 - Indústria - MMecânico, C Civil, Móveis e Vestuário - Noroeste', clientes:58},
+  {proj:'7727 - Indústria – Químico e Materiais – Norte - Londrina e região', clientes:12},
+  {proj:'7734 - Agronegócio - Agroindústria - Regional Noroeste', clientes:20},
+  {proj:'7743 - Tic - Regional Leste', clientes:20},
+  {proj:'7748 - Comércio E Serviços - Saúde E Bem Estar - Regional Noroeste', clientes:21},
+  {proj:'7749 - Indústria – Alimentos, Construção Civil e Metal Mecânica - Curitiba', clientes:100},
+  {proj:'7754 - Comércio e Serviços – Regional Curitiba – Varejo Inteligente', clientes:18},
+  {proj:'7757 - Agronegócio - Agroindústria - Norte do Paraná', clientes:35},
+  {proj:'7758 - Agronegócio - Fruticultura - Território Vale do Ivaí', clientes:25},
+  {proj:'7763 - Agronegócio – Piscicultura - Castro', clientes:16},
+  {proj:'7764 - Revitalização de Espaços Comerciais - Paranavaí', clientes:20},
+  {proj:'7766 - TIC – Paraná Centro', clientes:10},
+  {proj:'7767 - Comércio e Serviços – Paraná Centro', clientes:20},
+  {proj:'7768 - Startup – Paraná Centro', clientes:20},
+];
+
+$('loadPreset').addEventListener('click', ()=>{
+  clearRows();
+  FAT_PRESET.forEach(p => addRow({ proj: p.proj, media: '', clientes: p.clientes }));
+  fatCompute();
+});
 
 function splitCols(line){ if(line.indexOf('\t')>=0) return line.split('\t'); if(line.indexOf(';')>=0) return line.split(';'); return line.trim().split(/\s{2,}|\s+/); }
 function parsePercentToken(tok){ if(!tok) return NaN; let t=String(tok).trim().replace('%','').replace('\u00A0',' ').replace(',','.'); let v=parseFloat(t); if(!isFinite(v)) return NaN; if(v<=1) v=v*100; return v; }
@@ -843,6 +953,10 @@ function srCompute(){
     applyStatus($('sr_st2'), ex2);
   }
 }
+/* Pré-carregar os 2 grupos usados (Mulheres e 60+) */
+srAddRow({grupo:'Mulheres', n:'', pnad:'51,00'});
+srAddRow({grupo:'60+', n:'', pnad:'20,00'});
+
 ['sr_total','sr_Tsim'].forEach(id=>$(id).addEventListener('input', srCompute));
 srCompute();
 
