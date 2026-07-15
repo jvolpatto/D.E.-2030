@@ -23,7 +23,6 @@
   }
 </script>
 <style>
-  /* Estilos específicos */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -73,7 +72,7 @@
     <h2 class="text-xs font-extrabold text-brand-900 uppercase tracking-widest mb-4">Selecione o Indicador</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="indicatorCards">
       
-      <!-- Indicator Buttons generated statically -->
+      <!-- Indicator Buttons -->
       <button class="indicator-card text-left p-4 rounded-2xl border transition-all duration-200 active bg-gradient-to-b from-white to-brand-50 border-brand-500 shadow-md ring-1 ring-brand-500" data-indicator="produtividade">
         <div class="flex justify-between items-start mb-2">
           <span class="bg-brand-50 text-brand-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Percentual</span>
@@ -169,7 +168,6 @@
           <div><label class="block text-xs font-bold text-slate-700 mb-1.5">Meta simulada (%) <span class="font-normal text-slate-400">(opcional)</span></label><input id="p_Tsim" type="number" step="0.01" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none transition-all" placeholder="Ex.: 20,00"></div>
         </div>
         
-        <!-- Mini Cards Support -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
             <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Consolidado</div>
@@ -287,10 +285,10 @@
       <div class="panel" id="panel-subrep">
         <div class="mb-6">
           <h2 class="text-2xl font-extrabold text-slate-900">Cobertura de Sub-representados</h2>
-          <p class="text-slate-500 text-sm mt-2">Média simples das coberturas dos grupos, comparando share de atendidos com PNAD.</p>
+          <p class="text-slate-500 text-sm mt-2">Média simples das coberturas dos grupos, comparando share de atendidos (em relação à base de clientes com informação preenchida para o grupo) com a PNAD.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div><label class="block text-xs font-bold text-slate-700 mb-1.5">Total Clientes (nº)</label><input id="sr_total" type="number" step="1" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Ex.: 624202"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- Campo Total Clientes Geral removido para adequação à nova regra -->
           <div><label class="block text-xs font-bold text-slate-700 mb-1.5">Meta atual (%)</label><input id="sr_T" type="number" step="0.01" value="70.00" readonly class="w-full border border-slate-200 bg-slate-50 rounded-xl px-4 py-2.5 text-slate-500"></div>
           <div><label class="block text-xs font-bold text-slate-700 mb-1.5">Meta simulada (%)</label><input id="sr_Tsim" type="number" step="0.01" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-accent-500 outline-none" placeholder="Ex.: 75,00"></div>
         </div>
@@ -300,12 +298,14 @@
           <button id="sr_clear" class="bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">Restaurar Padrão</button>
         </div>
 
-        <div class="border border-slate-200 rounded-xl overflow-hidden mb-6">
-          <div class="max-h-64 overflow-y-auto">
+        <div class="border border-slate-200 rounded-xl overflow-x-auto mb-6">
+          <div class="min-w-[600px]">
             <table id="srTable" class="w-full text-sm text-left">
               <thead class="text-xs text-brand-900 uppercase bg-brand-50 sticky top-0 z-10 shadow-sm">
                 <tr>
                   <th class="px-4 py-3 font-bold">Grupo</th>
+                  <!-- Nova Coluna -->
+                  <th class="px-4 py-3 font-bold text-right" title="Total de clientes que possuem esta informação preenchida">Base Válida (nº)</th>
                   <th class="px-4 py-3 font-bold text-right">Clientes (nº)</th>
                   <th class="px-4 py-3 font-bold text-right">% Pop (PNAD)</th>
                   <th class="px-4 py-3 font-bold text-right">% Atendidos</th>
@@ -467,7 +467,6 @@
 </div>
 
 <script>
-// Helpers e Funções Utilitárias
 const $ = id => document.getElementById(id);
 const pctOut = (x,dec=2)=>((x||0)*100).toFixed(dec).replace('.',',')+'%';
 const ratioOut = (x,dec=1)=>((x||0)*100).toFixed(dec).replace('.',',')+'%';
@@ -588,7 +587,6 @@ function updateExecutivePanel(){
     $('anaSimRange').textContent = a.simRangeDisplay;
     
     if (a.simStatus) {
-      // Extrai apenas o texto curto antes do parênteses para o chip menor
       const shortText = a.simStatus.text.split('(')[0].trim();
       $('anaSimStatus').textContent = shortText;
       $('anaSimStatus').className = `text-[10px] px-2 py-0.5 rounded-full font-bold border ${a.simStatus.bg} ${a.simStatus.textc} ${a.simStatus.border}`;
@@ -608,7 +606,6 @@ function updateExecutivePanel(){
   if(!a.filled){
     marker.style.left = '0%';
   } else {
-    // 0 a 1.4 de execução (140%) mapeado para 0 a 100% de largura
     const pos = clamp((a.gaugeExec || 0)/1.4*100, 0, 100);
     marker.style.left = pos + '%';
   }
@@ -622,7 +619,6 @@ function updateCardStatus(indicator, analysis){
     el.textContent='Não simulado';
     return;
   }
-  // Simplified pill for cards
   el.className = `text-[10px] font-bold px-2 py-1 rounded-full border ${analysis.status.bg} ${analysis.status.textc} ${analysis.status.border}`;
   el.textContent = analysis.status.key === 'ok' ? 'Enquadrado' : (analysis.status.key === 'warn' ? 'Abaixo' : 'Acima');
 }
@@ -666,7 +662,7 @@ function prodCompute(){
   const filled = ((n1>0 && $('p_r1').value!=='') || (n2>0 && $('p_r2').value!=='')) && (n1+n2>0);
   const result = filled ? (r1*n1 + r2*n2)/Math.max(n1+n2,1) : 0;
   const T = toDec($('p_T').value);
-  const Ts = toDec($('p_Tsim').value); // Meta Simulada
+  const Ts = toDec($('p_Tsim').value);
   
   $('p_final').textContent = filled ? pctOut(result) : '0,00%';
   $('p_tot').textContent = fmtInt(n1+n2);
@@ -710,7 +706,7 @@ function fatCompute(){
   const mediaSimples = nProjetos>0 ? sumMedias/nProjetos : 0;
   const mediaPonderada = sumClientes>0 ? sumPesos/sumClientes : 0;
   const T = toDec($('f_T').value);
-  const Ts = toDec($('f_Tsim').value); // Meta Simulada
+  const Ts = toDec($('f_Tsim').value);
   
   $('fatCli').textContent = fmtInt(sumClientes);
   $('fatPeso').textContent = pctOut(sumPesos);
@@ -751,7 +747,6 @@ $('loadPreset').addEventListener('click', ()=>{ clearRows(); fatAddRow({proj:'Pr
 $('addRow').addEventListener('click', ()=>fatAddRow());
 $('clearRows').addEventListener('click', clearRows);
 
-// Other Calculators
 function cobCompute(){
   const at = toPlainNum($('c_at').value);
   const T = toPlainNum($('c_T').value);
@@ -796,41 +791,64 @@ function famCompute(){
   updateCardStatus('fampeados', state.fampeados); if(activeIndicator==='fampeados') updateExecutivePanel();
 }
 
-// Sub-representados logic
+// NOVA LÓGICA: Sub-representados (com Base Válida específica por linha)
 const srTbody = $('srTable').querySelector('tbody');
-function srAddRow(data={grupo:'',n:'',pnad:''}){
+function srAddRow(data={grupo:'', base:'', n:'', pnad:''}){
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td class="px-2 py-1"><input type="text" value="${data.grupo||''}" class="w-full border-b border-slate-200 px-2 py-1 focus:outline-none bg-transparent"></td>
-    <td class="px-2 py-1"><input type="number" step="1" value="${data.n||''}" class="w-full border-b border-slate-200 px-2 py-1 text-right focus:outline-none bg-transparent"></td>
+    <td class="px-2 py-1"><input type="text" value="${data.grupo||''}" class="w-full border-b border-slate-200 px-2 py-1 focus:outline-none bg-transparent" placeholder="Ex: Mulheres"></td>
+    <td class="px-2 py-1"><input type="number" step="1" value="${data.base||''}" class="w-full border-b border-slate-200 px-2 py-1 text-right focus:outline-none bg-transparent" placeholder="Ex: 50000"></td>
+    <td class="px-2 py-1"><input type="number" step="1" value="${data.n||''}" class="w-full border-b border-slate-200 px-2 py-1 text-right focus:outline-none bg-transparent" placeholder="Ex: 25000"></td>
     <td class="px-2 py-1"><input type="number" step="0.01" value="${data.pnad||''}" class="w-full border-b border-slate-200 px-2 py-1 text-right focus:outline-none bg-transparent"></td>
-    <td class="px-4 py-2 text-right text-slate-500">—</td><td class="px-4 py-2 text-right text-brand-600 font-bold">—</td>`;
+    <td class="px-4 py-2 text-right text-slate-500">—</td>
+    <td class="px-4 py-2 text-right text-brand-600 font-bold">—</td>`;
   srTbody.appendChild(tr);
   tr.querySelectorAll('input').forEach(el=>el.addEventListener('input', srCompute));
 }
-function initSubrepDefault(){ srTbody.innerHTML=''; srAddRow({grupo:'Mulheres', n:'', pnad:'51,00'}); srAddRow({grupo:'60+', n:'', pnad:'20,00'}); }
+
+function initSubrepDefault(){ 
+  srTbody.innerHTML=''; 
+  srAddRow({grupo:'Mulheres', base:'', n:'', pnad:'51,00'}); 
+  srAddRow({grupo:'60+', base:'', n:'', pnad:'20,00'}); 
+}
+
 function srCompute(){
-  const total = toPlainNum($('sr_total').value); let nGroups=0, sumCoverage=0;
+  let nGroups = 0, sumCoverage = 0;
+  let hasAnyData = false;
+
   Array.from(srTbody.querySelectorAll('tr')).forEach(tr=>{
-    const n = toPlainNum(tr.children[1].querySelector('input').value), pnad = toDec(tr.children[2].querySelector('input').value);
-    const share = total>0 ? n/total : 0; const cov = pnad>0 ? share/pnad : 0;
-    tr.children[3].innerHTML = (total>0 ? pctOut(share) : '—'); tr.children[4].innerHTML = (pnad>0 ? pctOut(cov) : '—');
-    if(n>0 && pnad>0 && total>0){ nGroups++; sumCoverage += cov; }
+    const base = toPlainNum(tr.children[1].querySelector('input').value);
+    const n = toPlainNum(tr.children[2].querySelector('input').value);
+    const pnad = toDec(tr.children[3].querySelector('input').value);
+
+    // Share = Clientes do Grupo / Total de Clientes que preencheram informação p/ aquele grupo
+    const share = base > 0 ? n / base : 0; 
+    const cov = pnad > 0 ? share / pnad : 0;
+
+    tr.children[4].innerHTML = (base > 0 ? pctOut(share) : '—'); 
+    tr.children[5].innerHTML = (pnad > 0 && base > 0 ? pctOut(cov) : '—');
+
+    if(n > 0 && pnad > 0 && base > 0){ 
+      nGroups++; 
+      sumCoverage += cov; 
+      hasAnyData = true;
+    }
   });
-  const media = nGroups>0 ? sumCoverage/nGroups : 0; 
+
+  const media = nGroups > 0 ? sumCoverage / nGroups : 0; 
   const T = toDec($('sr_T').value);
   const Ts = toDec($('sr_Tsim').value);
   
   state.subrep = makeAnalysis({
     title:'Sub-representados', kind:'percent', heroLabel:'Média de Cobertura', heroSub:'Consolidado dos grupos informados.',
-    filled: total>0 && nGroups>0, result: media, resultDisplay: pctOut(media), metaCurrent:T, metaDisplay:pctOut(T), execCurrent: T>0 ? media/T : 0,
+    filled: hasAnyData, result: media, resultDisplay: pctOut(media), metaCurrent:T, metaDisplay:pctOut(T), execCurrent: T>0 ? media/T : 0,
     metaSim: Ts > 0 ? Ts : null,
-    alert: total>0 ? 'Confira dados do PNAD para precisão.' : 'Informe base total e pelo menos um grupo.'
+    alert: hasAnyData ? 'Cálculo atualizado com base específica por grupo.' : 'Informe a base válida e clientes para ao menos um grupo.'
   });
   updateCardStatus('subrep', state.subrep); if(activeIndicator==='subrep') updateExecutivePanel();
 }
 $('sr_add').addEventListener('click', ()=>{ srAddRow(); srCompute(); });
-$('sr_clear').addEventListener('click', ()=>{ initSubrepDefault(); $('sr_total').value=''; srCompute(); });
+$('sr_clear').addEventListener('click', ()=>{ initSubrepDefault(); srCompute(); });
 
 function instCompute(){
   const at = toPlainNum($('ie_at').value);
@@ -868,7 +886,7 @@ function clearActiveIndicator(){
   else if(activeIndicator==='cobertura'){ ['c_at','c_Tsim'].forEach(id=>$(id).value=''); cobCompute(); }
   else if(activeIndicator==='cobertura_me'){ ['cme_at','cme_Tsim'].forEach(id=>$(id).value=''); cobMECompute(); }
   else if(activeIndicator==='fampeados'){ ['fa_num','fa_den','fa_Tsim'].forEach(id=>$(id).value=''); famCompute(); }
-  else if(activeIndicator==='subrep'){ $('sr_total').value=''; $('sr_Tsim').value=''; initSubrepDefault(); srCompute(); }
+  else if(activeIndicator==='subrep'){ $('sr_Tsim').value=''; initSubrepDefault(); srCompute(); } // Adaptado
   else if(activeIndicator==='instituicoes'){ ['ie_at','ie_Tsim'].forEach(id=>$(id).value=''); instCompute(); }
   else if(activeIndicator==='ambiente'){ ['amb_pts','amb_mun','amb_Tsim'].forEach(id=>$(id).value=''); ambCompute(); }
 }
@@ -882,7 +900,7 @@ $('exportBtn').addEventListener('click', ()=>window.print());
 ['c_at','c_Tsim'].forEach(id=>$(id).addEventListener('input', cobCompute));
 ['cme_at','cme_Tsim'].forEach(id=>$(id).addEventListener('input', cobMECompute));
 ['fa_num','fa_den','fa_Tsim'].forEach(id=>$(id).addEventListener('input', famCompute));
-['sr_total','sr_Tsim'].forEach(id=>$(id).addEventListener('input', srCompute));
+['sr_Tsim'].forEach(id=>$(id).addEventListener('input', srCompute)); // Adaptado
 ['ie_at','ie_Tsim'].forEach(id=>$(id).addEventListener('input', instCompute));
 ['amb_pts','amb_mun','amb_Tsim'].forEach(id=>$(id).addEventListener('input', ambCompute));
 
